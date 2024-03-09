@@ -1,0 +1,75 @@
+<!--Page used as the default home page, Owned by Frontend Team--!>
+<!--Connection Script to Database for Login/Create Account owned by Dominic Nguyen--!>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">       
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="popups.css">
+    <title>Home</title>
+</head>
+
+<!--HTML Code for the Header of the Home Page--!>
+<nav>
+    <div class="logo">
+        <img src="Cat walking silhouette.png"/>
+    </div>
+    <div class="welcome-message" style="display: none;">
+        Welcome, <span id="firstName"></span>!
+    </div>
+
+    <div class="buttons">
+        <button id="login" onclick="openPopup('loginPopup')">Account</button>    
+    </div>
+</nav>
+
+<body>
+    <!--Navagation cards HTML code below - Created by Aubrey--!>
+    <div class="cards" id="cards" style="display: none;">
+        <article class="card card1">
+            <h3><a href="feeding.html">Feeding</a></h3>
+        </article>
+
+        <article class="card card2">
+            <h3><a href="machinestatus.html">Machine Status</a></h3>
+        </article>
+
+        <article class="card card3">
+            <h3><a href="Camera.html">Camera</a></h3>
+        </article>
+    </div>
+
+    <!--HTML Login Popup Code --!>
+    <div id="loginPopup" class="popup">
+        <span class="close-btn" onclick="closePopup('loginPopup')">❌</span>     
+        <h2>Login</h2>
+        <form id="loginForm">
+            <input type="text" id="username" placeholder="Username">
+            <input type="password" id="password" placeholder="Password">
+            <button type="button" onclick="submitLoginForm()">Login</button>     
+        </form>
+        <p>Don't have an account? <a href="#" onclick="openCreateAccountPopup()">Create one</a></p>
+    </div>
+
+    <!--HTML create Account Popup Code --!>
+<!--fname, lname added by Dominic Nguyen --!>
+    <div id="createAccountPopup" class="popup">
+        <span class="close-btn" onclick="closePopup('createAccountPopup')">❌</span>
+        <h2>Create Account</h2>
+        <form id="createAccountForm">
+            <input type="text" id="fname" placeholder="First Name">
+            <input type="text" id="lname" placeholder="Last Name">
+            <input type="email" id="email" placeholder="Email">
+            <input type="text" id="newUsername" placeholder="Username">
+            <input type="password" id="newPassword" placeholder="Password">      
+            <button type="button" onclick="submitCreateAccountForm()">Create Account</button>
+        </form>
+    </div>
+
+    <!--Importing of javascript file, functions Created by Eric and Nathan, File created by Tim --!>
+    <script src="siteScript.js" type="text/javascript"></script>
+
+
+</body>
+</html>
