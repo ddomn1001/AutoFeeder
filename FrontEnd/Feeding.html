@@ -47,7 +47,7 @@
     //This part of the Script was Written by DOMINIC NGUYEN
     // Function to submit feeding information
     function submitFeeding(event) {
-        event.preventDefault(); // Prevent default form submission
+        event.preventDefault(); 
         const amount = document.getElementById("amount").value;
         fetch('/update-feeding-info', {
             method: 'POST',
