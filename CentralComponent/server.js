@@ -52,6 +52,17 @@ const pool = new Pool({
 function generateAuthToken(username) {
     return jwt.sign({ username }, 'c8hhdj992');
 }
+// Create account route
+app.post('/create-account', async (req, res) => {
+    const { email, newUsername, newPassword, fname, lname } = req.body;
+    try {
+        await pool.query('INSERT INTO login (username, email, password_hash, first_name, last_name) VALUES ($1, $2, crypt($3, gen_salt(\'bf\')), $4, $5)', [newUsername, email, newPassword, fname, lname]);
+        res.status(201).json({ message: 'Account created successfully' });
+    } catch (error) {
+        console.error('Error creating account:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
 
 // Login route
 app.post('/login', async (req, res) => {
