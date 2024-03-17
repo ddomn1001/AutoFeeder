@@ -4,7 +4,7 @@ import os
 
 def append_hi_to_file(directory, amount):
     file_path = os.path.join(directory, "output.txt")
-    with open(file_path, "a") as file:  # Use mode "a" to append to the file
+    with open(file_path, "a") as file: 
         for _ in range(amount):
             file.write("yo\n")
 
