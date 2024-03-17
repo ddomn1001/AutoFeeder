@@ -23,7 +23,7 @@ ws.on('message', async function incoming(data) {
         // Parse the amount from the message
         const amount = parseInt(message.amount);
 
-        // Define a function to run the script
+        // Define a function to run the motor2.py script,dispensing the food
         const runScript = async () => {
             return new Promise((resolve, reject) => {
                 exec('python motor2.py', (error, stdout, stderr) => {
@@ -31,7 +31,7 @@ ws.on('message', async function incoming(data) {
                         console.error(`Error executing script: ${error}`);
                         reject(error);
                     } else {
-                        console.log(`Script output: ${stdout}`);
+                        console.log(`Script Executing ${stdout}`);
                         resolve();
                     }
                 });
@@ -62,3 +62,4 @@ ws.on('error', function error(err) {
 ws.on('close', function close() {
     console.log('WebSocket connection closed');
 });
+
