@@ -92,14 +92,14 @@ app.post('/update-feeding-info', async (req, res) => {
 
     try {
         const result = await pool.query('INSERT INTO feeding_information (username, fed, amount) VALUES ($1, $2, $3) RETURNING *', [username, fed, amount]);
-
-        const insertedInfo = result.rows[0]; // Retrieve the inserted feeding information
+// Retrieve the inserted feeding information
+        const insertedInfo = result.rows[0]; 
 
         console.log('Inserted feeding information:', insertedInfo);
 
         // Send the new feeding information to the client
         const dataToSend = { id: insertedInfo.id, fed, amount, username };
-        console.log('Data being sent to client:', dataToSend); // Add this line for logging
+        console.log('Data being sent to client:', dataToSend);
 
         // Broadcast the new feeding information to all connected clients
         wss.clients.forEach(function each(client) {
@@ -108,7 +108,7 @@ app.post('/update-feeding-info', async (req, res) => {
             }
         });
 
-        res.status(200).json({ message: 'Feeding information updated successfully', insertedInfo }); // Return the inserted feeding information in the response
+        res.status(200).json({ message: 'Feeding information updated successfully', insertedInfo });
     } catch (error) {
         console.error('Error updating feeding information:', error);
         res.status(500).json({ message: 'Internal server error' });
