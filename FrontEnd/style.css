@@ -70,7 +70,6 @@ img {
      background-color: gray;
  }
 
-/* Add CSS styles for the popups */
 .popup {
     display: none;
     position: fixed;
