@@ -23,7 +23,7 @@ ws.on('message', function incoming(data) {
         // Parse the amount from the message
         const amount = parseInt(message.amount);
 
-        // Run the script 'xyz.py' multiple times based on the amount
+        // Run the script 'testScript.py' multiple times based on the amount
         for (let i = 0; i < amount; i++) {
             exec('python testScript.py', (error, stdout, stderr) => {
                 if (error) {
