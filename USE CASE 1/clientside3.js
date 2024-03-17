@@ -13,7 +13,7 @@ ws.on('open', function open() {
     console.log('WebSocket connection established');
 });
 
-ws.on('message', function incoming(data) {
+ws.on('message', async function incoming(data) {
     // Parse the received message as a JSON object
     const message = JSON.parse(data);
     console.log('Received message from server:', message);
@@ -23,22 +23,36 @@ ws.on('message', function incoming(data) {
         // Parse the amount from the message
         const amount = parseInt(message.amount);
 
-        // Run the script 'motor2.py' multiple times based on the amount
-        for (let i = 0; i < amount; i++) {
-            exec('python motor2.py', (error, stdout, stderr) => {
-                if (error) {
-                    console.error(`Error executing script: ${error}`);
-                    return;
-                }
-                console.log(`Script output: ${stdout}`);
+        // Define a function to run the script
+        const runScript = async () => {
+            return new Promise((resolve, reject) => {
+                exec('python motor2.py', (error, stdout, stderr) => {
+                    if (error) {
+                        console.error(`Error executing script: ${error}`);
+                        reject(error);
+                    } else {
+                        console.log(`Script output: ${stdout}`);
+                        resolve();
+                    }
+                });
+            });
+        };
 
+        // Run the script 'amount' times sequentially
+        for (let i = 0; i < amount; i++) {
+            try {
+                await runScript();
                 // Notify server of successful script execution with the id value included
                 ws.send(JSON.stringify({ success: true, id: message.id }));
-            });
+            } catch (error) {
+                // Handle error if needed
+                console.error("Error running script:", error);
+                // Notify server of failed script execution with the id value included
+                ws.send(JSON.stringify({ success: false, id: message.id }));
+            }
         }
     }
 });
-
 
 
 ws.on('error', function error(err) {
