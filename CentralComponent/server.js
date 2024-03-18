@@ -137,6 +137,14 @@ wss.on('connection', function connection(ws) {
     });
 });
 
+// Route to handle notifications from the frontend
+app.post('/notify', async (req, res) => {
+    console.log('Received notification from frontend:', req.body);
+
+    // Send success message to the frontend
+    res.status(200).json({ success: true, message: 'Notification received successfully' });
+});
+
 const port = 443;
 httpsServer.listen(port, () => {
     console.log(`Server is running on https://www.jmuautofeeder.com on port:${port}`);
