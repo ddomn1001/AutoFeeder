@@ -1,5 +1,6 @@
 //Script for CLIENT WEBSOCKET CONNECTION, Written Completely by Dominic Nguyen
 const WebSocket = require('ws');
+const https = require('https');
 const { exec } = require('child_process');
 
 // WebSocket connection URL
@@ -23,7 +24,7 @@ ws.on('message', async function incoming(data) {
         // Parse the amount from the message
         const amount = parseInt(message.amount);
 
-        // Define a function to run the motor2.py script,dispensing the food
+        // Define a function to run the motor2.py script, dispensing the food
         const runScript = async () => {
             return new Promise((resolve, reject) => {
                 exec('python motor2.py', (error, stdout, stderr) => {
@@ -43,7 +44,31 @@ ws.on('message', async function incoming(data) {
             try {
                 await runScript();
                 // Notify server of successful script execution with the id value included
-                ws.send(JSON.stringify({ success: true, id: message.id }));
+                const postData = JSON.stringify({ success: true, id: message.id });
+                const options = {
+                    hostname: 'www.jmuautofeeder.com',
+                    port: 443,
+                    path: '/notify',
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Content-Length': postData.length
+                    }
+                };
+
+                const req = https.request(options, (res) => {
+                    console.log(`statusCode: ${res.statusCode}`);
+                    res.on('data', (d) => {
+                        process.stdout.write(d);
+                    });
+                });
+
+                req.on('error', (error) => {
+                    console.error(error);
+                });
+
+                req.write(postData);
+                req.end();
             } catch (error) {
                 // Handle error if needed
                 console.error("Error running script:", error);
@@ -62,4 +87,3 @@ ws.on('error', function error(err) {
 ws.on('close', function close() {
     console.log('WebSocket connection closed');
 });
-
