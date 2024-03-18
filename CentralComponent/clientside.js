@@ -1,4 +1,3 @@
-//Script for CLIENT WEBSOCKET CONNECTION, Written Completely by Dominic Nguyen
 const WebSocket = require('ws');
 const https = require('https');
 const { exec } = require('child_process');
@@ -78,7 +77,6 @@ ws.on('message', async function incoming(data) {
         }
     }
 });
-
 
 ws.on('error', function error(err) {
     console.error('WebSocket error:', err);
