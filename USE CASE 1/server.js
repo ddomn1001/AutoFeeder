@@ -20,7 +20,7 @@ const credentials = { key: privateKey, cert: certificate };
 
 // Session middleware setup
 const sessionMiddleware = session({
-    secret: 'your_secret_key',
+    secret: 'fn889bkh',
     resave: false,
     saveUninitialized: true
 });
