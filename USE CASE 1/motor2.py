@@ -3,7 +3,7 @@ from gpiozero import AngularServo
 import time
 
 #Time Constant, Written By Dominic Nguyen and Mason Spillman
-TIME_LIMIT_SECONDS = 1.5
+TIME_LIMIT_SECONDS = 1.4
 #Written by Mason
 servo = AngularServo(18, min_pulse_width=0.0003, max_pulse_width=0.0026)
 
