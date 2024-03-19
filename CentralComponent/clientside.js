@@ -9,6 +9,7 @@ const socketUrl = 'wss://www.jmuautofeeder.com';
 const ws = new WebSocket(socketUrl);
 
 // WebSocket connection event handlers
+// Allows a visual viewing via the terminal of a successful connection
 ws.on('open', function open() {
     console.log('WebSocket connection established');
 });
@@ -38,7 +39,8 @@ ws.on('message', async function incoming(data) {
             });
         };
 
-        // Run the script 'amount' times sequentially
+        // Run the script 'amount' times sequentially, running one after another.
+        // Resolves issue of script running one after the other that occurred before.
         for (let i = 0; i < amount; i++) {
             try {
                 await runScript();
@@ -62,4 +64,3 @@ ws.on('error', function error(err) {
 ws.on('close', function close() {
     console.log('WebSocket connection closed');
 });
-
