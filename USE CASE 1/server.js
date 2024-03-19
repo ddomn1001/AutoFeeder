@@ -6,7 +6,7 @@ const bodyParser = require('body-parser');
 const { Pool } = require('pg');
 const WebSocket = require('ws');
 const jwt = require('jsonwebtoken');
-const session = require('express-session');
+// const session = require('express-session');
 const path = require('path');
 
 const app = express();
@@ -18,14 +18,14 @@ const privateKey = fs.readFileSync('/etc/letsencrypt/live/www.jmuautofeeder.com/
 const certificate = fs.readFileSync('/etc/letsencrypt/live/www.jmuautofeeder.com/fullchain.pem', 'utf8');
 const credentials = { key: privateKey, cert: certificate };
 
-// Session middleware setup
-const sessionMiddleware = session({
+// Session middleware setup; owned my Nathan Davis
+const session = require('express-session');
+app.use(session({
     secret: 'fn889bkh',
     resave: false,
-    saveUninitialized: true
-});
-
-app.use(sessionMiddleware);
+    saveUninitialized: true,
+    cookie: { secure: true }
+}));
 
 // Create HTTPS server
 const httpsServer = https.createServer(credentials, app);
@@ -83,6 +83,15 @@ app.post('/login', async (req, res) => {
     }
 });
 
+// middleware that checks for the session identifier in each request; owned by Nathan Davis
+const requireAuth = (req, res, next) => {
+    if (req.session.userId) {
+        next(); // User is authenticated, continue to next middleware
+    } else {
+        res.redirect('Home.html'); // User is not authenticated, redirect to login page
+    }
+}
+
 // Route to update feeding information
 app.post('/update-feeding-info', async (req, res) => {
     const { fed, amount } = req.body;
@@ -92,14 +101,14 @@ app.post('/update-feeding-info', async (req, res) => {
 
     try {
         const result = await pool.query('INSERT INTO feeding_information (username, fed, amount) VALUES ($1, $2, $3) RETURNING *', [username, fed, amount]);
-// Retrieve the inserted feeding information
-        const insertedInfo = result.rows[0]; 
+
+        const insertedInfo = result.rows[0]; // Retrieve the inserted feeding information
 
         console.log('Inserted feeding information:', insertedInfo);
 
         // Send the new feeding information to the client
         const dataToSend = { id: insertedInfo.id, fed, amount, username };
-        console.log('Data being sent to client:', dataToSend);
+        console.log('Data being sent to client:', dataToSend); // Add this line for logging
 
         // Broadcast the new feeding information to all connected clients
         wss.clients.forEach(function each(client) {
@@ -108,7 +117,7 @@ app.post('/update-feeding-info', async (req, res) => {
             }
         });
 
-        res.status(200).json({ message: 'Feeding information updated successfully', insertedInfo });
+        res.status(200).json({ message: 'Feeding information updated successfully', insertedInfo }); // Return the inserted feeding information in the response
     } catch (error) {
         console.error('Error updating feeding information:', error);
         res.status(500).json({ message: 'Internal server error' });
