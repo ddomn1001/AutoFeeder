@@ -133,6 +133,7 @@ wss.on('connection', function connection(ws) {
         console.log('Received message from client:', message);
 
         // Check if the message contains the 'success' field
+        // Check whether or not the value 'true' is apart of that message.
         if ('success' in message && message.success === true) {
                 console.log('Updating fed value for id:',[message.id]);
             try {
