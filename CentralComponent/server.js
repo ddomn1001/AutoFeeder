@@ -1,4 +1,4 @@
-//Serverside Script Owned by Dominic Nguyen
+//SERVERSIDE CODE WRITTEN COMPLETELY BY DOMINIC NGUYEN
 const express = require('express');
 const https = require('https');
 const fs = require('fs');
@@ -133,6 +133,7 @@ wss.on('connection', function connection(ws) {
         console.log('Received message from client:', message);
 
         // Check if the message contains the 'success' field
+        // Check whether or not the value 'true' is apart of that message.
         if ('success' in message && message.success === true) {
                 console.log('Updating fed value for id:',[message.id]);
             try {
@@ -149,4 +150,4 @@ wss.on('connection', function connection(ws) {
 const port = 443;
 httpsServer.listen(port, () => {
     console.log(`Server is running on https://www.jmuautofeeder.com on port:${port}`);
-});
+});v
