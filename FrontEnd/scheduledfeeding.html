@@ -2,16 +2,55 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">       
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="popups.css">
     <title>Scheduled Feeding</title>
 </head>
+
+<nav>
+    <div class="logo">
+        <img src="Cat walking silhouette.png"/>
+    </div>
+    <div class="buttons">
+        <a href="Home.html">
+            <button>Home</button>
+        </a>
+    </div>
+    <div class="buttons">
+        <button id="login" onclick="openPopup('loginPopup')">Account</button>    
+    </div>
+
+
+</nav>
 <body>
-    <label for="cars">Choose a car:</label>
-<select name="cars" id="cars">
+    <h1>Scheduled feeding for (username here)</h1>
+    <label for="times">Choose a time:</label>
+<select name="times" id="times">
     <option value="midnight">12 AM</option>
-    <option value="one am">1 AM</option>
-    <option value="mercedes">Mercedes</option>
-    <option value="audi">Audi</option>
+    <option value="oneam">1 AM</option>
+    <option value="twoam">2 AM</option>
+    <option value="threeam">3 AM</option>
+    <option value="fouram">4 AM</option>
+    <option value="fiveam">5 AM</option>
+    <option value="sixam">6 AM</option>
+    <option value="sevenam">7 AM</option>
+    <option value="eightam">8 AM</option>
+    <option value="nineam">9 AM</option>
+    <option value="tenam">10 AM</option>
+    <option value="elevenam">11 AM</option>
+    <option value="midday">12 PM</option>
+    <option value="onepm">1 PM</option>
+    <option value="twopm">2 PM</option>
+    <option value="threepm">3 PM</option>
+    <option value="fourpm">4 PM</option>
+    <option value="fivepm">5 PM</option>
+    <option value="sixpm">3 AM</option>
+    <option value="sevenpm">7 PM</option>
+    <option value="eightpm">8 PM</option>
+    <option value="ninepm">9 PM</option>
+    <option value="tenpm">10 PM</option>
+    <option value="elevenpm">11 PM</option>
 </select>
 
     <label for="cars">Number of ounces:</label>
