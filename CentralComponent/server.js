@@ -124,6 +124,141 @@ app.post('/update-feeding-info', async (req, res) => {
     }
 });
 
+
+
+// Route to update scheduled feeding information
+app.post('/update-scheduled-feeding-info', async (req, res) => {
+    const { time, amount } = req.body;
+    const username = req.session.username; // Retrieve username from session
+
+    console.log('Received scheduled feeding information:', { time, amount, username });
+
+    try {
+        // Convert time input to a valid time format for PostgreSQL
+        const parsedTime = parseTime(time);
+
+        // Insert the scheduled feeding information into the database
+        const result = await pool.query('INSERT INTO scheduled_feeding_information (username, feeding_time, amount) VALUES ($1, $2, $3) RETURNING *', [username, parsedTime, amount]);
+
+        const insertedInfo = result.rows[0]; // Retrieve the inserted scheduled feeding information
+
+        console.log('Inserted scheduled feeding information:', insertedInfo);
+
+        // Send the new scheduled feeding information to the client
+        const dataToSend = { id: insertedInfo.id, time: parsedTime, amount, username };
+        console.log('Data being sent to client:', dataToSend);
+
+        // Broadcast the new scheduled feeding information to all connected clients
+        wss.clients.forEach(function each(client) {
+            if (client.readyState === WebSocket.OPEN) {
+                client.send(JSON.stringify(dataToSend));
+            }
+        });
+
+        res.status(200).json({ message: 'Scheduled feeding information updated successfully', insertedInfo }); // Return the inserted scheduled feeding information in the response
+    } catch (error) {
+        if (error.code === '23505') {
+            // Unique constraint violation error (duplicate entry)
+            console.error('Error updating scheduled feeding information:', error);
+            res.status(400).json({ message: 'Scheduled feeding time already exists' });
+        } else {
+            // Other error
+            console.error('Error updating scheduled feeding information:', error);
+            res.status(500).json({ message: 'Internal server error' });
+        }
+    }
+});
+
+
+
+
+
+
+// Function to parse time input and convert it to a valid format for PostgreSQL
+function parseTime(inputTime) {
+    // Define mappings for time values
+    const timeMappings = {
+        'midnight': '00:00',
+        'oneam': '01:00',
+        'twoam': '02:00',
+        'threeam': '03:00',
+        'fouram': '04:00',
+        'fiveam': '05:00',
+        'sixam': '06:00',
+        'sevenam': '07:00',
+        'eightam': '08:00',
+        'nineam': '09:00',
+        'tenam': '10:00',
+        'elevenam': '11:00',
+        'midday': '12:00',
+        'onepm': '13:00',
+        'twopm': '14:00',
+        'threepm': '15:00',
+        'fourpm': '16:00',
+        'fivepm': '17:00',
+        'sixpm': '18:00',
+        'sevenpm': '19:00',
+        'eightpm': '20:00',
+        'ninepm': '21:00',
+        'tenpm': '22:00',
+        'elevenpm': '23:00'
+        // Add mappings for other time values as needed
+    };
+
+    // Check if the input time is mapped to a specific value
+    if (timeMappings.hasOwnProperty(inputTime)) {
+        return timeMappings[inputTime];
+    }
+
+    // If the input time is not mapped, assume it's in HH:MM format and return as is
+    return inputTime;
+}
+
+
+
+// Route to retrieve feeding information for the logged-in user
+app.get('/feeding-information', async (req, res) => {
+    const username = req.session.username; // Retrieve username from session
+
+    try {
+        // Query the database to retrieve feeding information for the logged-in user
+        const result = await pool.query('SELECT * FROM scheduled_feeding_information WHERE username = $1', [username]);
+
+        const feedingInfo = result.rows; // Retrieve the feeding information
+
+        res.status(200).json(feedingInfo); // Return the feeding information in the response
+    } catch (error) {
+        console.error('Error retrieving feeding information:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+
+// Route to update scheduled feeding information
+app.post('/edit-scheduled-feeding-info', async (req, res) => {
+    const { time, amount } = req.body;
+    const username = req.session.username; // Retrieve username from session
+
+    console.log('Received scheduled feeding information for editing:', { time, amount, username });
+
+    try {
+        // Convert time input to a valid time format for PostgreSQL
+        const parsedTime = parseTime(time);
+
+        // Update the scheduled feeding information in the database
+        const result = await pool.query('UPDATE scheduled_feeding_information SET amount = $1 WHERE username = $2 AND feeding_time = $3 RETURNING *', [amount, username, parsedTime]);
+
+        const updatedInfo = result.rows[0]; // Retrieve the updated scheduled feeding information
+
+        console.log('Updated scheduled feeding information:', updatedInfo);
+
+        res.status(200).json({ message: 'Scheduled feeding information updated successfully', updatedInfo }); // Return the updated scheduled feeding information in the response
+    } catch (error) {
+        console.error('Error updating scheduled feeding information:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
 // WebSocket connection event handler
 wss.on('connection', function connection(ws) {
     // WebSocket message handler for client success notification
@@ -133,7 +268,6 @@ wss.on('connection', function connection(ws) {
         console.log('Received message from client:', message);
 
         // Check if the message contains the 'success' field
-        // Check whether or not the value 'true' is apart of that message.
         if ('success' in message && message.success === true) {
                 console.log('Updating fed value for id:',[message.id]);
             try {
@@ -150,4 +284,4 @@ wss.on('connection', function connection(ws) {
 const port = 443;
 httpsServer.listen(port, () => {
     console.log(`Server is running on https://www.jmuautofeeder.com on port:${port}`);
-});v
+});
