@@ -1,4 +1,4 @@
-//SERVERSIDE CODE WRITTEN COMPLETELY BY DOMINIC NGUYEN
+//SERVERSIDE CODE 
 const express = require('express');
 const https = require('https');
 const fs = require('fs');
@@ -13,7 +13,7 @@ const app = express();
 
 app.use(bodyParser.json());
 
-// Load SSL certificate and key
+// Load SSL certificate and key DOMINIC NGUYEN
 const privateKey = fs.readFileSync('/etc/letsencrypt/live/www.jmuautofeeder.com/privkey.pem', 'utf8');
 const certificate = fs.readFileSync('/etc/letsencrypt/live/www.jmuautofeeder.com/fullchain.pem', 'utf8');
 const credentials = { key: privateKey, cert: certificate };
@@ -27,19 +27,20 @@ app.use(session({
     cookie: { secure: true }
 }));
 
-// Create HTTPS server
+// Create HTTPS server DOMINIC NGUYEN
 const httpsServer = https.createServer(credentials, app);
 
-// WebSocket server setup
+// WebSocket server setup DOMINIC NGUYEN
 const wss = new WebSocket.Server({ server: httpsServer });
 // Serve static files from the root directory
 app.use(express.static('/home/ubuntu/Autofeeder'));
 
-// Route for the root URL
+// Route for the root URL DOMINIC NGUYEN
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'Home.html'));
 });
 
+//DOMINIC NGUYEN
 const pool = new Pool({
     user: 'ubuntu',
     host: 'localhost',
@@ -48,11 +49,11 @@ const pool = new Pool({
     port: 5432,
 });
 
-// Function to generate JWT token
+// Function to generate JWT token DOMINIC NGUYEN
 function generateAuthToken(username) {
     return jwt.sign({ username }, 'c8hhdj992');
 }
-// Create account route
+// Create account route DOMINIC NGUYEN
 app.post('/create-account', async (req, res) => {
     const { email, newUsername, newPassword, fname, lname } = req.body;
     try {
@@ -64,7 +65,7 @@ app.post('/create-account', async (req, res) => {
     }
 });
 
-// Login route
+// Login route DOMINIC NGUYEN
 app.post('/login', async (req, res) => {
     const { username, password } = req.body;
     try {
@@ -92,7 +93,7 @@ const requireAuth = (req, res, next) => {
     }
 }
 
-// Route to update feeding information
+// Route to update feeding information DOMINIC NGUYEN
 app.post('/update-feeding-info', async (req, res) => {
     const { fed, amount } = req.body;
     const username = req.session.username; // Retrieve username from session
@@ -126,7 +127,7 @@ app.post('/update-feeding-info', async (req, res) => {
 
 
 
-// Route to update scheduled feeding information
+// Route to update scheduled feeding information DOMINIC NGUYEN
 app.post('/update-scheduled-feeding-info', async (req, res) => {
     const { time, amount } = req.body;
     const username = req.session.username; // Retrieve username from session
@@ -174,7 +175,7 @@ app.post('/update-scheduled-feeding-info', async (req, res) => {
 
 
 
-// Function to parse time input and convert it to a valid format for PostgreSQL
+// Function to parse time input and convert it to a valid format for PostgreSQL DOMINIC NGUYEN
 function parseTime(inputTime) {
     // Define mappings for time values
     const timeMappings = {
@@ -216,7 +217,7 @@ function parseTime(inputTime) {
 
 
 
-// Route to retrieve feeding information for the logged-in user
+// Route to retrieve feeding information for the logged-in user DOMINIC NGUYEN
 app.get('/feeding-information', async (req, res) => {
     const username = req.session.username; // Retrieve username from session
 
@@ -233,8 +234,8 @@ app.get('/feeding-information', async (req, res) => {
     }
 });
 
-
-// Route to update scheduled feeding information
+ 
+// Route to update scheduled feeding information DOMINIC NGUYEN
 app.post('/edit-scheduled-feeding-info', async (req, res) => {
     const { time, amount } = req.body;
     const username = req.session.username; // Retrieve username from session
@@ -259,7 +260,7 @@ app.post('/edit-scheduled-feeding-info', async (req, res) => {
     }
 });
 
-// WebSocket connection event handler
+// WebSocket connection event handler DOMINIC NGUYEN
 wss.on('connection', function connection(ws) {
     // WebSocket message handler for client success notification
     ws.on('message', async function incoming(data) {
@@ -281,6 +282,7 @@ wss.on('connection', function connection(ws) {
     });
 });
 
+// DOMINIC NGUYEN
 const port = 443;
 httpsServer.listen(port, () => {
     console.log(`Server is running on https://www.jmuautofeeder.com on port:${port}`);
