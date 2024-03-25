@@ -7,6 +7,7 @@ function openPopup(popupId) {
     popup.style.display = 'block';
 }
 
+
 // Function to close popup
 function closePopup(popupId) {
     const popup = document.getElementById(popupId);
@@ -55,17 +56,6 @@ function submitLoginForm() {
                 const welcomeMessage = document.createElement('span');
                 welcomeMessage.textContent = `Welcome, ${username}!`;
                 document.querySelector('.buttons').appendChild(welcomeMessage);
-
-                // Display welcome message in the center of the screen
-                // document.getElementById('welcome-message').style.display = 'flex';
-                // document.getElementById('firstName').appendChild('${username}!`)
-
-                // const centralContainer = document.createElement('div');
-                // centralContainer.classList.add('central-container');
-                // const welcomeMessage = document.createElement('span');
-                // welcomeMessage.textContent = `Welcome, ${username}!`;
-                // centralContainer.appendChild(welcomeMessage);
-                // document.body.appendChild(centralContainer);
 
                 fetch(`/user/${username}`, {
                     method: 'GET',
@@ -135,7 +125,9 @@ function submitCreateAccountForm() {
 }
 
 //This part of the Script was Written by DOMINIC NGUYEN and Tim Hudson
+
 // Function to submit feeding information
+
 function submitFeeding(event) {
     event.preventDefault();
     const amount = document.getElementById("amount").value;
@@ -165,20 +157,171 @@ function submitFeeding(event) {
         });
 }
 
+
 // function to check for an existing session and display elements based on session; owned by Nathan Davis
 function checkSession() {
     const username = sessionStorage.getItem('username');
     if (username) {
         // User is logged in
         document.getElementById('cards').style.display = 'flex';
-        // document.querySelector('.welcome-message').style.display = 'block';
-        // document.querySelector('.welcome-message span').textContent = username;
     } else {
         // User is not logged in
         document.getElementById('cards').style.display = 'none';
-        document.querySelector('.welcome-message').style.display = 'none';
     }
 }
 
-// call checkSession to check for an existing session when page loads
+// call checkSession to check for an existing session when page loads; owbed by Nathan Davis
 document.addEventListener('DOMContentLoaded', checkSession);
+
+// Feeding schedule that add and edit current schedule; owned by Nathan Davis
+// Function to add event listeners
+document.addEventListener('DOMContentLoaded', function () {
+    document.getElementById('add').addEventListener('click', openAddPopup);
+    document.getElementById('edit').addEventListener('click', openEditPopup);
+});
+
+// Function to open the add schedule popup
+function openAddPopup() {
+    openPopup('addPopup');
+}
+
+// Function to open the edit schedule popup
+function openEditPopup() {
+    openPopup('editPopup');
+}
+
+// Function to add a new schedule line DOMINIC NGUYEN
+function addScheduleLine() {
+    const time = document.getElementById('times').value;
+    const ounces = document.getElementById('amount').value;
+
+    // Create new schedule line HTML
+    const scheduleLine = document.createElement('div');
+    scheduleLine.classList.add('schedule-line');
+    scheduleLine.dataset.time = time;
+    scheduleLine.dataset.ounces = ounces;
+    scheduleLine.innerHTML = `<p>Time: ${time}, Ounces: ${ounces}</p>`;
+
+    // Append schedule line to the container
+    const scheduleContainer = document.getElementById('schedule-container');
+    scheduleContainer.appendChild(scheduleLine);
+
+    // Close the add popup
+    closePopup('addPopup');
+}
+
+// Function to add event listeners DOMINIC NGUYEN
+document.addEventListener('DOMContentLoaded', function () {
+    document.getElementById('submitButton').addEventListener('click', submitScheduledFeeding);
+});
+
+// Function to submit scheduled feeding information to the server DOMINIC NGUYEN
+function submitScheduledFeeding(event) {
+    event.preventDefault(); 
+
+    // Get the time and amount values from the form
+    const time = document.getElementById("times").value;
+    const amount = document.getElementById("amount").value;
+
+    // Prepare the data to send to the server
+    const data = {
+        time: time,
+        amount: amount
+    };
+
+    // Send the data to the server using a POST request
+    fetch('/update-scheduled-feeding-info', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => {
+        if (response.ok) {
+            return response.json();
+        }
+        throw new Error('Network response was not ok.');
+    })
+    .then(data => {
+        console.log('Scheduled feeding information updated successfully:', data);
+        // Display success message on the frontend
+        alert('Scheduled feeding information updated successfully!');
+    })
+    .catch(error => {
+        console.error('Error updating scheduled feeding information:', error);
+        // Display error message on the frontend
+        alert('Error updating scheduled feeding information. Please try again later.');
+    });
+}
+
+// Function to fetch and display feeding information when the page loads DOMINIC NGUYEN
+window.onload = async function() {
+    await fetchFeedingInformation(); // Populate the schedule entries
+};
+
+// Function to fetch feeding information for the logged-in user
+async function fetchFeedingInformation() {
+    try {
+        const response = await fetch('/feeding-information');
+        const data = await response.json();
+
+        // Display the feeding information on the page
+        const scheduleContainer = document.getElementById('schedule-container');
+        scheduleContainer.innerHTML = ''; // Clear previous content
+
+        data.forEach(item => {
+            const feedingTime = item.feeding_time;
+            const amount = item.amount;
+            const listItem = document.createElement('div');
+            listItem.textContent = `Time: ${feedingTime}, Amount: ${amount} ounces`;
+            listItem.setAttribute('data-id', item.id);
+            listItem.addEventListener('click', () => selectEntry(listItem));
+            scheduleContainer.appendChild(listItem);
+        });
+    } catch (error) {
+        console.error('Error fetching feeding information:', error);
+    }
+}
+
+// Function to open the edit schedule popup
+function openEditPopup() {
+    openPopup('editPopup');
+}
+
+// Function to edit a schedule line DOMINIC NGUYEN
+function editScheduleLine() {
+    const time = document.getElementById('edit-times').value;
+    const amount = document.getElementById('edit-oz').value;
+
+    // Prepare the data to send to the server
+    const data = {
+        time: time,
+        amount: amount
+    };
+
+    // Send the data to the server using a POST request DOMINIC NGUYEN
+    fetch('/edit-scheduled-feeding-info', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => {
+        if (response.ok) {
+            return response.json();
+        }
+        throw new Error('Network response was not ok.');
+    })
+    .then(data => {
+        console.log('Scheduled feeding information updated successfully:', data);
+        // Display success message on the frontend
+        alert('Scheduled feeding information updated successfully!');
+    })
+    .catch(error => {
+        console.error('Error updating scheduled feeding information:', error);
+        // Display error message on the frontend
+        alert('Error updating scheduled feeding information. Please try again later.');
+    });
+}
