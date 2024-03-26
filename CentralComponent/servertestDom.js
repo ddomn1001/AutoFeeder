@@ -260,14 +260,23 @@ app.post('/edit-scheduled-feeding-info', async (req, res) => {
     }
 });
 
-// Function to check and trigger scheduled feeding DOMINIC NGUYEN
+// Function to check and trigger scheduled feeding within a time window
 async function checkScheduledFeeding() {
+    // Get the current time in the format HH:MM:SS
     const currentTime = new Date().toLocaleTimeString('en-US', { hour12: false });
 
     try {
-        const result = await pool.query('SELECT * FROM scheduled_feeding_information WHERE feeding_time = $1', [currentTime]);
+        // Define the time window (e.g., 5 seconds before and after the current time)
+        const timeWindowStart = new Date();
+        timeWindowStart.setSeconds(timeWindowStart.getSeconds() - 5); // 5 seconds before current time
+        const timeWindowEnd = new Date();
+        timeWindowEnd.setSeconds(timeWindowEnd.getSeconds() + 5); // 5 seconds after current time
+
+        // Query the database for scheduled feeding events within the time window
+        const result = await pool.query('SELECT * FROM scheduled_feeding_information WHERE feeding_time >= $1 AND feeding_time <= $2;', [timeWindowStart.toLocaleTimeString('en-US', { hour12: false }), timeWindowEnd.toLocaleTimeString('en-US', { hour12: false })]);
         const feedingInfo = result.rows;
 
+        // If there are scheduled feeding events within the time window, send notifications to clients
         feedingInfo.forEach(info => {
             const dataToSend = { id: info.id, fed: true, amount: info.amount, username: info.username };
             console.log('Data being sent to client:', dataToSend);
@@ -284,8 +293,9 @@ async function checkScheduledFeeding() {
     }
 }
 
-// Run checkScheduledFeeding every second Dominic Nguyen
+// Run checkScheduledFeeding every second
 setInterval(checkScheduledFeeding, 1000);
+
 
 // WebSocket connection event handler DOMINIC NGUYEN
 wss.on('connection', function connection(ws) {
