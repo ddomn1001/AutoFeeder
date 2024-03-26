@@ -1,20 +1,49 @@
+/* CSS style page for all pages */
 body {
-    background-color: #CBB677;
+    background-color: #333333;
     color: white;
+    margin: 0;
+    padding: 0;
+    font-family: Cambria;
 }
 
 nav {
     background-color: #450084;
     color: white;
+    overflow: hidden;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 
 }
 
-
-img {
-    width: 17%;
+nav a {
     display: block;
-    margin-left: auto;
-    margin-right: auto;
+    color: white;
+    text-align: center;
+    padding: 14px 20px;
+    text-decoration: none;
+}
+
+
+nav img {
+    height: 150px;
+    margin: 0;
+
+}
+
+nav .logo-container {
+    display: flex;
+    align-items: center;
+}
+
+nav .welcome-message {
+    color: white;
+    font-size: 16px;
+}
+
+.page-title {
+    font-size: 30px;
 }
 
   .buttons {
@@ -22,9 +51,9 @@ img {
     gap: 3em;
     align-items: center;
     justify-content: flex-end;
-    padding: 10px;
+    padding: 5px;
 
-
+    
   }
 
   button {
@@ -61,15 +90,55 @@ img {
      color: white;
  }
 
- .displaybox {
-     display: flex;
-     justify-content: center;
-     align-items: center;
-     width: 1280px;
-     height: 720px;
-     background-color: gray;
- }
+label {
+    font-size: 35px;
+    padding-right: 10px;
+    padding-left: 25px;
+}
 
+#x, #submit {
+    font-size: 25px;
+    margin-left: 15px;
+}
+
+select {
+    height: 35px;
+    width: 75px;
+}
+
+.addedit {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 200px;
+}
+
+#schedule-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+/*#add {
+    display: inline;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    margin-left: 25px;
+    margin-bottom: 10px;
+}
+
+#edit {
+    display: inline;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    margin-left: 200px;
+    margin-bottom: 10px;
+} */
+
+/* Add CSS styles for the popups */
 .popup {
     display: none;
     position: fixed;
@@ -101,4 +170,81 @@ img {
 #createAccountForm input {
     margin-bottom: 10px;
     padding: 5px;
+}
+
+
+@media (max-width:800px) {
+
+    .buttons {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .cards {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    h1 {
+        display: flex;
+        align-items: center;
+    }
+
+}
+
+.feeding-buttons-container {
+    display: flex;
+    justify-content: flex-start;
+
+    height: 100vh;
+}
+
+.feeding-buttons-box {
+    width: 1000px;
+    height: 115px;
+    background-color: #450084;
+    border: 1px solid #450084;
+    padding: 20px;
+    box-sizing: border-box;
+    text-align: center;
+
+}
+
+.camera-buttons-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.camera-buttons-box {
+    width: 1000px;
+    height: 125px;
+    background-color: #450084;
+    border: 1px solid #450084;
+    padding: 20px;
+    box-sizing: border-box;
+    text-align: center;
+
+}
+
+
+.ms-buttons-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.ms-buttons-box {
+    width: 1000px;
+    height: 125px;
+    background-color: #450084;
+    border: 1px solid #450084;
+    padding: 20px;
+    box-sizing: border-box;
+    text-align: center;
+
 }

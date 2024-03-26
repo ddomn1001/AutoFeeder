@@ -1,4 +1,4 @@
-<!-- HTML for the machine status page --!>
+<!-- HTML for the camera page --!>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="popups.css">
-    <title>Machine Status</title>
+    <title>Camera</title>
 </head>
 
 <nav>
@@ -14,29 +14,29 @@
         <img src="JMU-Logo.png" alt="">
         <div class="welcome-message" style="display: none;">Welcome, <span id="firstName"></span>! </div>
         <div class="page-title">
-            <h1>Machine Status</h1>
+            <h1>Camera Controls</h1>
         </div>
     </div>
-    
+
     <div class="buttons">
-
-
+        
         <a href="Home.html"> <button id="home">Home</button> </a>
     </div>
 </nav>
 <body>
 
 
-    <div class="ms-buttons-container">
-        <div class="ms-buttons-box">
-            <a> <button id="wipButton" >Start Machine</button> </a>
-            <a> <button id="wipButton">Pause Machine</button> </a>
 
-        </div>
+
+
+<div class="camera-buttons-container">
+
+    <div class="camera-buttons-box">
+        <div class="displaybox">Camera feed will render in a moment.</div>
+        <a> <button id="wipButton">Start Camera Feed</button> </a>
+        <a> <button id="wipButton">Stop Camera Feed</button> </a>
     </div>
-
-    <script src="siteScript.js" type="text/javascript"></script>
-
-
+</div>
+<script src="siteScript.js" type="text/javascript"></script>
 </body>
 </html>

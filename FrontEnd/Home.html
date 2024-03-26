@@ -12,32 +12,29 @@
 
 <!--HTML Code for the Header of the Home Page--!>
 <nav>
-    <div class="logo">
-        <img src="Cat walking silhouette.png"/>
+    <div class="logo-container">
+        <img src="JMU-Logo.png" alt="">
+        <div class="welcome-message" style="display: none;">Welcome, <span id="firstName"></span>! </div>
+        <div class="page-title">
+            <h1>Home</h1>
+        </div>
     </div>
-    <div class="welcome-message" style="display: none;">
-        Welcome, <span id="firstName"></span>!
-    </div>
-
+    
     <div class="buttons">
-        <button id="login" onclick="openPopup('loginPopup')">Account</button>    
+        <button id="login" onclick="openPopup('loginPopup')">Account</button>
     </div>
 </nav>
 
 <body>
     <!--Navagation cards HTML code below - Created by Aubrey--!>
     <div class="cards" id="cards" style="display: none;">
-        <article class="card card1">
-            <h3><a href="feeding.html">Feeding</a></h3>
-        </article>
-
-        <article class="card card2">
-            <h3><a href="machinestatus.html">Machine Status</a></h3>
-        </article>
-
-        <article class="card card3">
-            <h3><a href="Camera.html">Camera</a></h3>
-        </article>
+    <div class="home-buttons-container">
+        <div class="home-buttons-box">
+            <a href="feeding.html"> <button id="feeding-button" >Feeding</button> </a>
+            <a href="machinestatus.html"> <button id="machine-status">Machine Status</button> </a>
+            <a href="Camera.html"> <button id="camera-button" >Camera</button> </a>
+        </div>
+    </div>
     </div>
 
     <!--HTML Login Popup Code --!>

@@ -190,7 +190,7 @@ function openEditPopup() {
     openPopup('editPopup');
 }
 
-// Function to add a new schedule line DOMINIC NGUYEN
+// Function to add a new schedule line
 function addScheduleLine() {
     const time = document.getElementById('times').value;
     const ounces = document.getElementById('amount').value;
@@ -202,6 +202,17 @@ function addScheduleLine() {
     scheduleLine.dataset.ounces = ounces;
     scheduleLine.innerHTML = `<p>Time: ${time}, Ounces: ${ounces}</p>`;
 
+    // Create delete button
+    const deleteButton = document.createElement('button');
+    deleteButton.textContent = 'Delete';
+    deleteButton.classList.add('delete-button');
+    deleteButton.onclick = function() {
+        openDeletePopup(scheduleLine);
+    };
+
+    // Append delete button to schedule line
+    scheduleLine.appendChild(deleteButton);
+
     // Append schedule line to the container
     const scheduleContainer = document.getElementById('schedule-container');
     scheduleContainer.appendChild(scheduleLine);
@@ -210,14 +221,62 @@ function addScheduleLine() {
     closePopup('addPopup');
 }
 
-// Function to add event listeners DOMINIC NGUYEN
+// Function to open the delete confirmation popup
+function openDeletePopup(scheduleLine) {
+    // Store the schedule line element to delete
+    window.selectedScheduleLine = scheduleLine;
+    // Open the delete popup
+    openPopup('deletePopup');
+}
+
+// Function to submit scheduled feeding information to the server
+/*function submitScheduledFeeding(event) {
+    event.preventDefault(); // Prevent the default form submission behavior
+
+    // Get the time and amount values from the form
+    const time = document.getElementById("times").value;
+    const amount = document.getElementById("amount").value;
+
+    // Prepare the data to send to the server
+    const data = {
+        time: time,
+        amount: amount
+    };
+
+    // Send the data to the server using a POST request
+    fetch('/update-scheduled-feeding-info', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => {
+        if (response.ok) {
+            return response.json();
+        }
+        throw new Error('Network response was not ok.');
+    })
+    .then(data => {
+        console.log('Scheduled feeding information updated successfully:', data);
+        // Display success message on the frontend
+        alert('Scheduled feeding information updated successfully!');
+    })
+    .catch(error => {
+        console.error('Error updating scheduled feeding information:', error);
+        // Display error message on the frontend
+        alert('Error updating scheduled feeding information. Please try again later.');
+    });
+}*/
+
+// Function to add event listeners
 document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('submitButton').addEventListener('click', submitScheduledFeeding);
 });
 
-// Function to submit scheduled feeding information to the server DOMINIC NGUYEN
+// Function to submit scheduled feeding information to the server
 function submitScheduledFeeding(event) {
-    event.preventDefault(); 
+    event.preventDefault(); // Prevent the default form submission behavior
 
     // Get the time and amount values from the form
     const time = document.getElementById("times").value;
@@ -255,7 +314,7 @@ function submitScheduledFeeding(event) {
     });
 }
 
-// Function to fetch and display feeding information when the page loads DOMINIC NGUYEN
+// Function to fetch and display feeding information when the page loads
 window.onload = async function() {
     await fetchFeedingInformation(); // Populate the schedule entries
 };
@@ -269,6 +328,7 @@ async function fetchFeedingInformation() {
         // Display the feeding information on the page
         const scheduleContainer = document.getElementById('schedule-container');
         scheduleContainer.innerHTML = ''; // Clear previous content
+        
 
         data.forEach(item => {
             const feedingTime = item.feeding_time;
@@ -278,6 +338,7 @@ async function fetchFeedingInformation() {
             listItem.setAttribute('data-id', item.id);
             listItem.addEventListener('click', () => selectEntry(listItem));
             scheduleContainer.appendChild(listItem);
+	    
         });
     } catch (error) {
         console.error('Error fetching feeding information:', error);
@@ -289,7 +350,7 @@ function openEditPopup() {
     openPopup('editPopup');
 }
 
-// Function to edit a schedule line DOMINIC NGUYEN
+// Function to edit a schedule line
 function editScheduleLine() {
     const time = document.getElementById('edit-times').value;
     const amount = document.getElementById('edit-oz').value;
@@ -300,7 +361,7 @@ function editScheduleLine() {
         amount: amount
     };
 
-    // Send the data to the server using a POST request DOMINIC NGUYEN
+    // Send the data to the server using a POST request
     fetch('/edit-scheduled-feeding-info', {
         method: 'POST',
         headers: {
@@ -325,3 +386,10 @@ function editScheduleLine() {
         alert('Error updating scheduled feeding information. Please try again later.');
     });
 }
+// JavaScript function to create alert when button is clicked
+function createAlert() {
+    alert("Feature still being developed");
+}
+
+// Adding event listener to the button
+document.getElementById("wipButton").addEventListener("click", createAlert);

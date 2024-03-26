@@ -1,0 +1,90 @@
+<!-- HTML for the feeding page -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="popups.css">
+    <title>Feeding</title>
+</head>
+
+<nav>
+    <div class="logo-container">
+        <img src="JMU-Logo.png" alt="">
+        <div class="welcome-message" style="display: none;">Welcome, <span id="firstName"></span>! </div>
+        <div class="page-title">
+            <h1>Feeding Central</h1>
+        </div>
+    </div>
+    
+    <div class="buttons">
+        <a> <button id="wipButton">Notifications</button> </a>
+
+        <a href="Home.html"> <button id="home">Home</button> </a>
+    </div>
+</nav>
+<body>
+
+
+<div class="cards">
+    <!---
+    <article class="card card1">
+        <h3>On-Demand Feeding</h3>
+        Form for on-demand feeding
+        <form id="feedingForm" onsubmit="submitFeeding(event)">
+            <label for="amount">Amount to feed (1-6 ounces):</label>
+            <input type="number" id="amount" name="amount" min="1" max="6" required>
+            <button type="submit">Submit</button>
+        </form>
+    </article>
+    --!>
+<div class="feeding-buttons-container">
+    <div class="feeding-buttons-box">
+        <a> <button id="feeding-buttons" onclick="openPopup('onDemandPopup')">On Demand Feeding</button> </a>
+        <a href="scheduledfeeding.html"> <button id="scheduled">Scheduled Feeding</button> </a>
+    </div>
+    <!--HTML On-Demand Feeding Popup Code --!>
+    <div id="onDemandPopup" class="popup">
+        <span class="close-btn" onclick="closePopup('onDemandPopup')">❌</span>
+        <h2>On-Demand Feeding</h2>
+        <form id="feedingForm" onsubmit="submitFeeding(event)">
+            <label for="amount">Amount to feed (1-6 ounces):</label>
+            <select type="number" id="amount" name="amount">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+            </select>
+            <button type="submit">Submit</button>
+        </form>
+
+    </div>
+
+
+</div>
+
+
+
+<!---
+    <div id="notiPopup" class="popup">
+        <span class="close-btn" onclick="closePopup('notiPopup')">❌</span>
+        <h2>Notifications</h2>
+        </div>
+
+        </form>
+
+    </div>
+    --!>
+</div>
+
+<!--Importing of javascript file, functions Created by Eric and Nathan, File created by Tim --!>
+<script src="siteScript.js" type="text/javascript"></script>
+
+
+
+</body>
+</html>
+
