@@ -223,7 +223,7 @@ app.get('/feeding-information', async (req, res) => {
 
     try {
         // Query the database to retrieve feeding information for the logged-in user
-        const result = await pool.query('SELECT * FROM scheduled_feeding_information WHERE username = $1', [username]);
+        const result = await pool.query('SELECT * FROM scheduled_feeding_information WHERE username = $1 ORDER BY feeding_time;', [username]);
 
         const feedingInfo = result.rows; // Retrieve the feeding information
 
