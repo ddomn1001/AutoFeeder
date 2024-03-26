@@ -223,7 +223,7 @@ app.get('/feeding-information', async (req, res) => {
 
     try {
         // Query the database to retrieve feeding information for the logged-in user
-        const result = await pool.query('SELECT * FROM scheduled_feeding_information WHERE username = $1 ORDER BY feeding_time;', [username]);
+        const result = await pool.query('SELECT * FROM scheduled_feeding_information WHERE username = $1', [username]);
 
         const feedingInfo = result.rows; // Retrieve the feeding information
 
@@ -260,6 +260,38 @@ app.post('/edit-scheduled-feeding-info', async (req, res) => {
     }
 });
 
+// Function to check and trigger scheduled feeding DOMINIC NGUYEN
+async function checkScheduledFeeding() {
+    const currentTime = new Date().toLocaleTimeString('en-US', { hour12: false });
+
+    try {
+        const result = await pool.query('SELECT * FROM scheduled_feeding_information WHERE feeding_time = $1', [currentTime]);
+        const feedingInfo = result.rows;
+
+        if (feedingInfo.length > 0) {
+            const info = feedingInfo[0];
+            const dataToSend = { id: info.id, fed: true, amount: info.amount, username: info.username };
+            console.log('Data being sent to client:', dataToSend);
+
+            // Broadcast the new feeding information to all connected clients
+            wss.clients.forEach(function each(client) {
+                if (client.readyState === WebSocket.OPEN) {
+                    client.send(JSON.stringify(dataToSend));
+                }
+            });
+        }
+    } catch (error) {
+        console.error('Error checking scheduled feeding:', error);
+    }
+}
+
+// Run checkScheduledFeeding once
+checkScheduledFeeding();
+
+// Run checkScheduledFeeding every second
+setInterval(checkScheduledFeeding, 1000);
+
+
 // WebSocket connection event handler DOMINIC NGUYEN
 wss.on('connection', function connection(ws) {
     // WebSocket message handler for client success notification
@@ -270,7 +302,7 @@ wss.on('connection', function connection(ws) {
 
         // Check if the message contains the 'success' field
         if ('success' in message && message.success === true) {
-                console.log('Updating fed value for id:',[message.id]);
+            console.log('Updating fed value for id:',[message.id]);
             try {
                 // Update fed value in the feeding_information table
                 await pool.query('UPDATE feeding_information SET fed = true WHERE id = $1;', [message.id]);
