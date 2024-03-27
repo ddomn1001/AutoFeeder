@@ -229,46 +229,6 @@ function openDeletePopup(scheduleLine) {
     openPopup('deletePopup');
 }
 
-// Function to submit scheduled feeding information to the server
-/*function submitScheduledFeeding(event) {
-    event.preventDefault(); // Prevent the default form submission behavior
-
-    // Get the time and amount values from the form
-    const time = document.getElementById("times").value;
-    const amount = document.getElementById("amount").value;
-
-    // Prepare the data to send to the server
-    const data = {
-        time: time,
-        amount: amount
-    };
-
-    // Send the data to the server using a POST request
-    fetch('/update-scheduled-feeding-info', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-    })
-    .then(response => {
-        if (response.ok) {
-            return response.json();
-        }
-        throw new Error('Network response was not ok.');
-    })
-    .then(data => {
-        console.log('Scheduled feeding information updated successfully:', data);
-        // Display success message on the frontend
-        alert('Scheduled feeding information updated successfully!');
-    })
-    .catch(error => {
-        console.error('Error updating scheduled feeding information:', error);
-        // Display error message on the frontend
-        alert('Error updating scheduled feeding information. Please try again later.');
-    });
-}*/
-
 // Function to add event listeners
 document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('submitButton').addEventListener('click', submitScheduledFeeding);
@@ -393,3 +353,39 @@ function createAlert() {
 
 // Adding event listener to the button
 document.getElementById("wipButton").addEventListener("click", createAlert);
+
+//Function to Pause the machine Dominic Nguyen
+function pauseMachine() {
+    fetch('/pause-machine', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => {
+        if (response.ok) {
+            console.log('Machine paused successfully');
+        } else {
+            console.error('Failed to pause machine');
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+//Function to Start the machine Dominic Nguyen
+function startMachine() {
+    fetch('/start-machine', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => {
+        if (response.ok) {
+            console.log('Machine started successfully');
+        } else {
+            console.error('Failed to start machine');
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
