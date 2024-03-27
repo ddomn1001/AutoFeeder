@@ -325,3 +325,39 @@ function editScheduleLine() {
         alert('Error updating scheduled feeding information. Please try again later.');
     });
 }
+
+//Function to Pause the machine Dominic Nguyen
+function pauseMachine() {
+    fetch('/pause-machine', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => {
+        if (response.ok) {
+            console.log('Machine paused successfully');
+        } else {
+            console.error('Failed to pause machine');
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+//Function to Start the machine Dominic Nguyen
+function startMachine() {
+    fetch('/start-machine', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => {
+        if (response.ok) {
+            console.log('Machine started successfully');
+        } else {
+            console.error('Failed to start machine');
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
