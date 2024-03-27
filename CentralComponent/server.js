@@ -260,6 +260,9 @@ app.post('/edit-scheduled-feeding-info', async (req, res) => {
     }
 });
 
+let scheduledFeedingInterval;
+let isMachinePaused = false; // Flag to track machine pause state DOMINIC NGUYEN
+
 // Function to check and trigger scheduled feeding DOMINIC NGUYEN
 async function checkScheduledFeeding() {
     const currentTime = new Date().toLocaleTimeString('en-US', { hour12: false });
@@ -267,8 +270,8 @@ async function checkScheduledFeeding() {
     try {
         const result = await pool.query('SELECT * FROM scheduled_feeding_information WHERE feeding_time = $1', [currentTime]);
         const feedingInfo = result.rows;
-
-        if (feedingInfo.length > 0) {
+        // console.log(isMachinePaused); Used this log statement solely for testing purposes. As it runs, shows boolean value once every second.
+        if (!isMachinePaused && feedingInfo.length > 0) { // Check if the machine is not paused
             const info = feedingInfo[0];
             const dataToSend = { id: info.id, fed: true, amount: info.amount, username: info.username };
             console.log('Data being sent to client:', dataToSend);
@@ -291,6 +294,22 @@ checkScheduledFeeding();
 // Run checkScheduledFeeding every second
 setInterval(checkScheduledFeeding, 1000);
 
+// Route to pause scheduled feeding checks DOMINIC NGUYEN
+app.post('/pause-machine', async (req, res) => {
+    console.log('Pause machine route called');
+    clearInterval(scheduledFeedingInterval); // Stop the interval
+    isMachinePaused = true; // Set machine pause flag
+    res.status(200).json({ message: 'Machine paused successfully' });
+});
+
+// Route to start scheduled feeding checks DOMINIC NGUYEN
+app.post('/start-machine', async (req, res) => {
+    console.log('Start machine route called');
+    isMachinePaused = false; // Reset machine pause flag
+    checkScheduledFeeding(); // Run immediately
+    scheduledFeedingInterval = setInterval(checkScheduledFeeding, 1000); // Run every second
+    res.status(200).json({ message: 'Machine started successfully' });
+});
 
 // WebSocket connection event handler DOMINIC NGUYEN
 wss.on('connection', function connection(ws) {
