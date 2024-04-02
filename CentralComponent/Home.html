@@ -1,0 +1,92 @@
+<!--Page used as the default home page, Owned by Frontend Team--!>
+<!--Connection Script to Database for Login/Create Account owned by Dominic Nguyen--!>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">       
+    <link rel="stylesheet" href="style.css">
+
+    <title>Home</title>
+</head>
+
+<!--HTML Code for the Header of the Home Page--!>
+<nav>
+        <img class='Logo' src="JMU-Logo-2.png" alt="">
+        <div class="welcome-message" style="display: none;">Welcome, <span id="firstName"></span>! </div>
+
+    </div>
+
+    <div class="buttons">
+        <button id="login" onclick="openPopup('loginPopup')">Login</button>
+	<button id="account" onclick="openPopup('accountPopup')" style="display: none;">Account</button>
+    </div>
+</nav>
+
+<body>
+    <div id="leftBox">
+        <div class="Welcome-Text" id="home-welcome">
+            Welcome to the JMU Autofeeder Website! Please click the Login button in the top right to either login or create
+            and account
+        </div>
+    </div>
+
+
+
+    <!--Navagation cards HTML code below - Created by Aubrey--!>
+    <div class="cards" id="cards" style="display: none;">
+
+        <div class="feeding-button-box" data-text="Control Center for on-demand feeding and scheduled feeding">
+            <a href="feeding.html"> <button id="feeding-button" >Feeding</button> </a>
+
+        </div>
+        <div class="status-button-box" data-text="Page to start and stop scheduled feeding functionality">
+            <a href="machinestatus.html"> <button id="machine-status">Machine Status</button> </a>
+        </div>
+        <div class="camera-button-box" data-text="Page to view live camera feed from auto-feeder">
+            <a href="Camera.html"> <button id="camera-button" >Camera</button> </a>
+        </div>
+
+   </div>
+
+    <!--HTML Account Popup Code; owned by Nathan Davis --!>
+    <div id="accountPopup" class="popup">
+    <span class="close-btn" onclick="closePopup('accountPopup')">XXX</span>
+    	// display username
+	// x button to close popup
+	// log out button
+    </div>
+
+    <!--HTML Login Popup Code --!>
+    <div id="loginPopup" class="popup">
+        <span class="close-btn" onclick="closePopup('loginPopup')">❌</span>     
+        <h2>Login</h2>
+        <form id="loginForm">
+            <input type="text" id="username" placeholder="Username">
+            <input type="password" id="password" placeholder="Password">
+            <button type="button" onclick="submitLoginForm()">Login</button>     
+        </form>
+        <p>Don't have an account? <a href="#" onclick="openCreateAccountPopup()">Create one</a></p>
+    </div>
+
+    <!--HTML create Account Popup Code --!>
+<!--fname, lname added by Dominic Nguyen --!>
+    <div id="createAccountPopup" class="popup">
+        <span class="close-btn" onclick="closePopup('createAccountPopup')">❌</span>
+        <h2>Create Account</h2>
+        <form id="createAccountForm">
+            <input type="text" id="fname" placeholder="First Name">
+            <input type="text" id="lname" placeholder="Last Name">
+            <input type="email" id="email" placeholder="Email">
+            <input type="text" id="newUsername" placeholder="Username">
+            <input type="password" id="newPassword" placeholder="Password">      
+            <button type="button" onclick="submitCreateAccountForm()">Create Account</button>
+        </form>
+    </div>
+
+    <!--Importing of javascript file, functions Created by Eric and Nathan, File created by Tim --!>
+    <script src="siteScript.js" type="text/javascript"></script>
+
+
+</body>
+</html>
