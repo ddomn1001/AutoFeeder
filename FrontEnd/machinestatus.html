@@ -1,4 +1,4 @@
-<!-- HTML for the machine status page --!>
+<!-- HTML for the machine status page; basic HTML created by Aubrey Simpson, additions made by Tim Hudson -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,27 +10,51 @@
 </head>
 
 <nav>
-    <div class="logo-container">
-        <img src="JMU-Logo.png" alt="">
-        <div class="welcome-message" style="display: none;">Welcome, <span id="firstName"></span>! </div>
-        <div class="page-title">
-            <h1>Machine Status</h1>
-        </div>
+    <img class='Logo' src="JMU-Logo-2.png" alt="">
+    <div class="welcome-message" style="display: none;">Welcome, <span id="firstName"></span>! </div>
+
     </div>
-    
+
     <div class="buttons">
-
-
         <a href="Home.html"> <button id="home">Home</button> </a>
+        <button id="account" onclick="openPopup('accountPopup')">Account</button>
     </div>
 </nav>
 <body>
 
+<!--HTML Account Popup Code; owned by Nathan Davis --!>
+<div id="accountPopup" class="popup">
+    <span class="close-btn" onclick="closePopup('accountPopup')">❌</span>
+    <h2>Account</h2>
+    <p class="userInfo" id="userInfoText"></p>
+    <button id="logout" onclick="logout()">Logout</button>
+
+</div>
+
+<div id="leftBox">
+    <div class="feeding-text" id="machine-status">
+        Welcome to the Machine Status Page! Please click one of the buttons below!
+    </div>
+
+    <div class="start-button-box" data-text="Clicking this button starts the set feeding schedule">
+        <a onclick="startMachine()"> <button id="startButton">Start Machine</button> </a>
+    </div>
+    <div class="pause-button-box" data-text="Clicking this button pauses the set feeding schedule">
+        <a onclick="pauseMachine()"> <button id="pauseButton">Pause Machine</button> </a>
+    </div>
+   
+
+
+
+
 
     <div class="ms-buttons-container">
         <div class="ms-buttons-box">
-            <a> <button id="wipButton" >Start Machine</button> </a>
-            <a> <button id="wipButton">Pause Machine</button> </a>
+           <!-- <a> <button id="wipButton" >Start Machine</button> </a>
+	   <a> <button id="wipButton">Pause Machine</button> </a> -->
+	   <!-- New buttons with new IDs DOMINIC NGUYEN -->
+
+
 
         </div>
     </div>

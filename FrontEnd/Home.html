@@ -6,39 +6,61 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">       
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="popups.css">
+
     <title>Home</title>
 </head>
 
 <!--HTML Code for the Header of the Home Page--!>
 <nav>
-    <div class="logo-container">
-        <img src="JMU-Logo.png" alt="">
+        <img class='Logo' src="JMU-Logo-2.png" alt="">
         <div class="welcome-message" style="display: none;">Welcome, <span id="firstName"></span>! </div>
-        <div class="page-title">
-            <h1>Home</h1>
-        </div>
+
     </div>
-    
+
     <div class="buttons">
-        <button id="login" onclick="openPopup('loginPopup')">Account</button>
+        <button id="login" onclick="openPopup('loginPopup')">Login</button>
+        <button id="account" onclick="openPopup('accountPopup')" style="display: none;">Account</button>
     </div>
 </nav>
+<div id="overlay"></div>
 
 <body>
-    <!--Navagation cards HTML code below - Created by Aubrey--!>
-    <div class="cards" id="cards" style="display: none;">
-    <div class="home-buttons-container">
-        <div class="home-buttons-box">
-            <a href="feeding.html"> <button id="feeding-button" >Feeding</button> </a>
-            <a href="machinestatus.html"> <button id="machine-status">Machine Status</button> </a>
-            <a href="Camera.html"> <button id="camera-button" >Camera</button> </a>
+    <div id="leftBox">
+        <div class="Welcome-Text" id="home-welcome">
+            Welcome to the JMU Autofeeder Website! Please click the Login button in the top right to either login or create
+            and account
         </div>
     </div>
+
+
+
+    <!--Navagation cards HTML code below - Created by Aubrey--!>
+    <div class="cards" id="cards" style="display: none;">
+
+        <div class="feeding-button-box" data-text="Control Center for on-demand feeding and scheduled feeding">
+            <a href="feeding.html"> <button id="feeding-button" >Feeding</button> </a>
+
+        </div>
+        <div class="status-button-box" data-text="Page to start and stop scheduled feeding functionality">
+            <a href="machinestatus.html"> <button id="machine-status">Machine Status</button> </a>
+        </div>
+        <div class="camera-button-box" data-text="Page to view live camera feed from auto-feeder">
+            <a href="Camera.html"> <button id="camera-button" >Camera</button> </a>
+        </div>
+
+   </div>
+
+    <!--HTML Account Popup Code; owned by Nathan Davis --!>
+    <div id="accountPopup" class="popup">
+        <span class="close-btn" onclick="closePopup('accountPopup')">❌</span>
+	<h2>Account</h2>
+	<p class="userInfo" id="userInfoText"></p>
+	<button id="logout" onclick="logout()">Logout</button>
+    	
     </div>
 
     <!--HTML Login Popup Code --!>
-    <div id="loginPopup" class="popup">
+    <div id="loginPopup" class="popup loginPopup">
         <span class="close-btn" onclick="closePopup('loginPopup')">❌</span>     
         <h2>Login</h2>
         <form id="loginForm">
@@ -51,7 +73,7 @@
 
     <!--HTML create Account Popup Code --!>
 <!--fname, lname added by Dominic Nguyen --!>
-    <div id="createAccountPopup" class="popup">
+    <div id="createAccountPopup" class="popup createAccountPopup">
         <span class="close-btn" onclick="closePopup('createAccountPopup')">❌</span>
         <h2>Create Account</h2>
         <form id="createAccountForm">
@@ -60,7 +82,7 @@
             <input type="email" id="email" placeholder="Email">
             <input type="text" id="newUsername" placeholder="Username">
             <input type="password" id="newPassword" placeholder="Password">      
-            <button type="button" onclick="submitCreateAccountForm()">Create Account</button>
+            <button id="createAccount" type="button" onclick="submitCreateAccountForm()">Create Account</button>
         </form>
     </div>
 

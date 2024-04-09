@@ -10,33 +10,61 @@
 </head>
 
 <nav>
-    <div class="logo-container">
-        <img src="JMU-Logo.png" alt="">
-        <div class="welcome-message" style="display: none;">Welcome, <span id="firstName"></span>! </div>
-        <div class="page-title">
-            <h1>Camera Controls</h1>
-        </div>
+    <img class='Logo' src="JMU-Logo-2.png" alt="">
+    <div class="welcome-message" style="display: none;">Welcome, <span id="firstName"></span>! </div>
+    <div class = "page-title">
+    <h1></h1>
+    </div>
     </div>
 
     <div class="buttons">
-        
         <a href="Home.html"> <button id="home">Home</button> </a>
+        <button id="account" onclick="openPopup('accountPopup')">Account</button>
     </div>
 </nav>
 <body>
 
+<!--HTML Account Popup Code; owned by Nathan Davis --!>
+<div id="accountPopup" class="popup">
+    <span class="close-btn" onclick="closePopup('accountPopup')">❌</span>
+    <h2>Account</h2>
+    <p class="userInfo" id="userInfoText"></p>
+    <button id="logout" onclick="logout()">Logout</button>
 
+</div>
 
+<div class ="camera-buttons-container">
+<div class = "camera-buttons-box">
+<div class = "displaybox">Camera Feed Will Render</div>
+<button id = "startCameraButton"> Stop Camera</button> </a>
+</div>
+</div>
 
-
-<div class="camera-buttons-container">
-
-    <div class="camera-buttons-box">
-        <div class="displaybox">Camera feed will render in a moment.</div>
-        <a> <button id="wipButton">Start Camera Feed</button> </a>
-        <a> <button id="wipButton">Stop Camera Feed</button> </a>
+<div id="leftBox">
+    <div class="feeding-text" id="camera-welcome">
+        Welcome to the Camera Page! Please click one of the buttons below!
     </div>
+
+    <div class="start-camera-button-box" data-text="Clicking this button stops the camera feed">
+        <a> <button onclick="wipAlert()" id="start">Stop Camera Feed</button> </a>
+    </div>
+    <div class="pause-camera-button-box" data-text="Clicking this button starts the camera feed">
+        <a> <button onclick="wipAlert()" id="stop">Start Camera Feed</button> </a>
+    </div>
+
+
+
+
+
+
+<div id="cameraPopup" class="popup">
+	<div class = "popup-content">
+		<span class = "close" onclick="closeCameraPopup()">&times;</span>
+		<h2>Camer feed</h2>
+		<video id="camerFeed" autoplay></video>
+	</div>
 </div>
 <script src="siteScript.js" type="text/javascript"></script>
+</div>
 </body>
 </html>
