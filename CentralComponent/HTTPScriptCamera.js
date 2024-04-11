@@ -275,7 +275,6 @@ app.post('/edit-scheduled-feeding-info', requireAuth, async (req, res) => {
 let scheduledFeedingInterval;
 let isMachinePaused = false; // Flag to track machine pause state
 
-// Function to check and trigger scheduled feeding DOMINIC NGUYEN
 async function checkScheduledFeeding(username) {
     const currentTime = new Date().toLocaleTimeString('en-US', { hour12: false });
 
@@ -283,29 +282,30 @@ async function checkScheduledFeeding(username) {
         const result = await pool.query('SELECT * FROM scheduled_feeding_information WHERE feeding_time = $1', [currentTime]);
         const feedingInfo = result.rows;
 
-        // Check if the username exists in feeding_information
-        const feedingResult = await pool.query('SELECT * FROM feeding_information WHERE username = $1', [username]);
-        const feedingInfoExists = feedingResult.rows.length > 0;
-
-        let isNewUser = 'New: no';
-        if (!scheduledFeedingExists && !feedingInfoExists) {
-            isNewUser = 'New: yes';
-        }
-
+      
         // Send message to the client
-        const messageToSend = { isNewUser };
-        console.log('Message being sent to client:', messageToSend);
+        
 
         if (!isMachinePaused && feedingInfo.length > 0) { // Check if the machine is not paused
             const info = feedingInfo[0];
             const dataToSend = { id: info.id, fed: true, amount: info.amount, username: info.username };
             console.log('Data being sent to client:', dataToSend);
+  // Check if the username exists in feeding_information
+        const feedingResult = await pool.query('SELECT * FROM feeding_information WHERE username = $1', [info.username]);
+        const feedingInfoExists = feedingResult.rows.length > 0;
 
+        let isNewUser = 'New: no';
+        if (!feedingInfo.length && !feedingInfoExists) { // Fix this line
+            isNewUser = 'New: yes';
+        }
+        const messageToSend = { isNewUser };
+        console.log('Message being sent to client:', messageToSend);
             // Broadcast the new feeding information to all connected clients
             wss.clients.forEach(function each(client) {
                 if (client.readyState === WebSocket.OPEN) {
-                    client.send(JSON.stringify(dataToSend));
                     client.send(JSON.stringify(messageToSend));
+                    client.send(JSON.stringify(dataToSend));
+                    
                 }
             });
         }
