@@ -282,6 +282,7 @@ async function checkScheduledFeeding() {
     try {
         const result = await pool.query('SELECT * FROM scheduled_feeding_information WHERE feeding_time = $1', [currentTime]);
         const feedingInfo = result.rows;
+        const username = req.session.username; //
         // Check if the username exists in feeding_information
         const feedingResult = await pool.query('SELECT * FROM feeding_information WHERE username = $1', [username]);
         const feedingInfoExists = feedingResult.rows.length > 0;
