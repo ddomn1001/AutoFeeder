@@ -1,15 +1,15 @@
-//SERVERSIDE CODE 
+//SERVERSIDE CODE
 const express = require('express');
-const http = require('http'); 
+const http = require('http');
 const bodyParser = require('body-parser');
 const { Pool } = require('pg');
 const WebSocket = require('ws');
 const jwt = require('jsonwebtoken');
 const session = require('express-session');
 const path = require('path');
-
+const fs = require('fs');
 const app = express();
-const server = http.createServer(app); 
+const server = http.createServer(app);
 
 app.use(bodyParser.json());
 app.use(express.static('/home/ubuntu/Autofeeder'));
@@ -28,14 +28,14 @@ app.use(session({
 }));
 
 // WebSocket server setup
-const wss = new WebSocket.Server({ server }); 
+const wss = new WebSocket.Server({ server });
 
 // Initialize PostgreSQL Pool
 const pool = new Pool({
     user: 'ubuntu',
     host: 'localhost',
-    database: 'AutoFeeder',
-    password: 'checkout',
+    database: 'autofeeder',
+    password: 'Checkout',
     port: 5432,
 });
 
@@ -45,7 +45,7 @@ function generateAuthToken(username) {
 }
 
 // Session middleware setup; owned my Nathan Davis
-const session = require('express-session');
+//const session = require('express-session');
 app.use(session({
     secret: 'fn889bkh',
     resave: false,
@@ -106,18 +106,7 @@ app.post('/update-feeding-info', async (req, res) => {
         const insertedInfo = result.rows[0]; // Retrieve the inserted feeding information
 
         console.log('Inserted feeding information:', insertedInfo);
-// Check if the username exists in feeding_information
-        const feedingResult = await pool.query('SELECT * FROM feeding_information WHERE username = $1', [username]);
-        const feedingInfoExists = feedingResult.rows.length > 0;
 
-        let isNewUser = 'New: no';
-        if (!feedingInfo.length && !feedingInfoExists) { // Check if there's no scheduled feeding and no feeding information exists
-            isNewUser = 'New: yes';
-        }
-
-        // Send message to the client about new user status
-        const messageToSend = { isNewUser };
-        console.log('Message being sent to client:', messageToSend);
         // Send the new feeding information to the client
         const dataToSend = { id: insertedInfo.id, fed, amount, username };
         console.log('Data being sent to client:', dataToSend); // Add this line for logging
@@ -129,22 +118,14 @@ app.post('/update-feeding-info', async (req, res) => {
             }
         });
 
-                // Send both feeding information and the message about new user status to the client
-        wss.clients.forEach(function each(client) {
-            if (client.readyState === WebSocket.OPEN) {
-                if (feedingInfo.length > 0) {
-                    client.send(JSON.stringify(dataToSend));
-                }
-                client.send(JSON.stringify(messageToSend));
-            }
-        });
-
         res.status(200).json({ message: 'Feeding information updated successfully', insertedInfo }); // Return the inserted feeding information in the response
     } catch (error) {
         console.error('Error updating feeding information:', error);
         res.status(500).json({ message: 'Internal server error' });
     }
 });
+
+
 
 // Route to update scheduled feeding information DOMINIC NGUYEN
 app.post('/update-scheduled-feeding-info', async (req, res) => {
@@ -249,7 +230,7 @@ app.get('/feeding-information', async (req, res) => {
     }
 });
 
- 
+
 // Route to update scheduled feeding information DOMINIC NGUYEN
 app.post('/edit-scheduled-feeding-info', async (req, res) => {
     const { time, amount } = req.body;
@@ -328,6 +309,150 @@ wss.on('connection', function connection(ws) {
     });
 });
 
+
+/*
+wss.on('connection', function connection(ws) {
+    console.log('WebSocket connection established');
+
+    // WebSocket message handler
+    ws.on('message', function incoming(data) {
+        // Handle incoming video stream data
+        console.log('Received video stream data from client:', data);
+
+        // Write video stream data to file (example)
+        fs.appendFileSync('videoStream.mp4', data);
+    });
+});
+*/
+// WebSocket connection event handlers
+/*wss.on('connection', function connection(ws) {
+    console.log('WebSocket connection established');
+
+    // WebSocket message handler
+    ws.on('message', function incoming(data) {
+        // Handle incoming video stream data
+        console.log('Received video stream data from client:', data);
+
+        // Write video stream data to file (example)
+        fs.appendFileSync('videoStream.mp4', data);
+
+        // Broadcast the received data to all WebSocket clients (optional)
+        wss.clients.forEach(function each(client) {
+            if (client !== ws && client.readyState === WebSocket.OPEN) {
+                client.send(data);
+            }
+        });
+    });
+});*/
+const NodeWebcam = require('node-webcam');
+//const fs = require('fs');
+
+// Create a WebSocket server
+//const wss = new WebSocket.Server({ port: 8080 });
+
+// Create webcam instance
+const Webcam = NodeWebcam.create({
+    width: 1280,
+    height: 720,
+    quality: 100,
+    delay: 0,
+    saveShots: false,
+    output: "jpeg",
+    device: false,
+    callbackReturn: "buffer" // Capture image as buffer
+});
+
+// Function to capture image from webcam, save it as PNG or JPG, and send it via WebSocket
+/*
+async function captureAndSendImage(ws) {
+    Webcam.capture("", async function(err, data) {
+        if (err) {
+            console.error("Error capturing image:", err);
+        } else {
+            console.log("Image captured");
+            try {
+                // Save captured image to a file as PNG or JPG
+                const fileName = `/home/ubuntu/Autofeeder/captured_image_${Date.now()}.jpg`; // Adjust the file path and format as needed
+                fs.writeFileSync(fileName, data);
+
+                console.log("Image saved to:", fileName);
+
+                // Send the file name to the client via WebSocket
+                ws.send(JSON.stringify({ image: fileName }));
+            } catch (error) {
+                console.error("Error saving image:", error);
+            }
+        }
+    });
+}
+*/
+// Function to capture image from webcam, save it as PNG or JPG, and send it via WebSocket
+/*
+async function captureAndSendImage(ws) {
+    Webcam.capture("", async function(err, data) {
+        if (err) {
+            console.error("Error capturing image:", err);
+            return; // Exit function early if there's an error
+        }
+
+        console.log("Image captured");
+        try {
+            // Save captured image to a file as PNG or JPG
+            const fileName = `/home/ubuntu/Autofeeder/captured_image_${Date.now()}.jpg`; // Adjust the file path and format as needed
+            fs.writeFileSync(fileName, data);
+
+            console.log("Image saved to:", fileName);
+
+            // Send the file name to the client via WebSocket
+            ws.send(JSON.stringify({ image: fileName }));
+        } catch (error) {
+            console.error("Error saving image:", error);
+        }
+    });
+}
+*/
+/*
+// WebSocket connection event handler
+wss.on('connection', function connection(ws) {
+    console.log('WebSocket connection established');
+
+    // When a message is received from the client
+    ws.on('message', function incoming(message) {
+        console.log('Received message from client:', message);
+
+        // Parse the received message as a JSON object
+        const parsedMessage = JSON.parse(message);
+
+        // Check if the message contains the 'image' field
+        if (parsedMessage.image) {
+            const imageData = parsedMessage.image;
+
+            // Generate a unique filename for the captured image
+            const fileName = `/home/ubuntu/Autofeeder/captured_images/captured_image_${Date.now()}.jpg`;
+
+            // Write the image data to a file
+            fs.writeFile(fileName, imageData, 'base64', function(err) {
+                if (err) {
+                    console.error('Error saving image:', err);
+                } else {
+                    console.log('Image saved successfully:', fileName);
+                }
+            });
+        }
+    });
+});
+*/
+
+
+// Error handler for WebSocket server
+wss.on('error', function error(err) {
+    console.error('WebSocket server error:', err);
+});
+
+// Close handler for WebSocket server
+wss.on('close', function close() {
+    console.log('WebSocket server closed');
+});
 // Define HTTP port
 const port = 80;
 
