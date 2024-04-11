@@ -1,5 +1,5 @@
-//Script for CLIENT WEBSOCKET CONNECTION, Written Completely by Dominic Nguyen
 const WebSocket = require('ws');
+const NodeWebcam = require('node-webcam');
 const { exec } = require('child_process');
 
 // WebSocket connection URL
@@ -8,8 +8,13 @@ const socketUrl = 'wss://www.jmuautofeeder.com';
 // Create a new WebSocket instance
 const ws = new WebSocket(socketUrl);
 
+// Create webcam instance
+const Webcam = NodeWebcam.create();
+
+// Define a counter to keep track of new users
+let newUserCounter = 1;
+
 // WebSocket connection event handlers
-// Allows a visual viewing via the terminal of a successful connection
 ws.on('open', function open() {
     console.log('WebSocket connection established');
 });
@@ -24,38 +29,50 @@ ws.on('message', async function incoming(data) {
         // Parse the amount from the message
         const amount = parseInt(message.amount);
 
-        // Define a function to run the motor2.py script,dispensing the food
-        const runScript = async () => {
-            return new Promise((resolve, reject) => {
-                exec('python motor2.py', (error, stdout, stderr) => {
-                    if (error) {
-                        console.error(`Error executing script: ${error}`);
-                        reject(error);
-                    } else {
-                        console.log(`Script Executing ${stdout}`);
-                        resolve();
-                    }
-                });
-            });
-        };
+        // Define the filename prefix
+        let filenamePrefix = 'capture';
 
-        // Run the script 'amount' times sequentially, running one after another.
-        // Resolves issue of script running one after the other that occurred before.
+        // Check if the user is new
+        if ('isNewUser' in message && message.isNewUser === 'New: yes') {
+            // Modify the filename prefix with the counter
+            filenamePrefix += `_${newUserCounter}`;
+            // Increment the counter for the next new user
+            newUserCounter++;
+        }
+
+        // Run the script 'amount' times sequentially
         for (let i = 0; i < amount; i++) {
             try {
-                await runScript();
-                // Notify server of successful script execution with the id value included
+                // Capture an image from the webcam
+                Webcam.capture(filenamePrefix, async function(err, data) {
+                    if (err) {
+                        console.error('Error capturing image:', err);
+                        return;
+                    }
+                    // Convert the captured image data to base64
+                    const imageDataBase64 = data.toString('base64');
+                    // Send the base64-encoded image data to the server via WebSocket
+                    ws.send(JSON.stringify({ image: imageDataBase64 }));
+                    // Execute SCP command to transfer the captured image
+                    exec(`scp -i ./AWS313AutoFeeder.pem ./${filenamePrefix}.bmp ubuntu@44.220.217.210:/home/ubuntu/Autofeeder`, (error, stdout, stderr) => {
+                        if (error) {
+                            console.error(`Error transferring image: ${error}`);
+                            return;
+                        }
+                        console.log('Image transferred successfully:', stdout);
+                    });
+                });
+                // Notify server of successful image capture with the id value included
                 ws.send(JSON.stringify({ success: true, id: message.id }));
             } catch (error) {
                 // Handle error if needed
-                console.error("Error running script:", error);
-                // Notify server of failed script execution with the id value included
+                console.error("Error capturing image:", error);
+                // Notify server of failed image capture with the id value included
                 ws.send(JSON.stringify({ success: false, id: message.id }));
             }
         }
     }
 });
-
 
 ws.on('error', function error(err) {
     console.error('WebSocket error:', err);
