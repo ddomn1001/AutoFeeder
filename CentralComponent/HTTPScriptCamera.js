@@ -282,33 +282,41 @@ async function checkScheduledFeeding(username) {
         const result = await pool.query('SELECT * FROM scheduled_feeding_information WHERE feeding_time = $1', [currentTime]);
         const feedingInfo = result.rows;
 
-      
-        // Send message to the client
-        
+        // Check if the username exists in feeding_information
+        const feedingResult = await pool.query('SELECT * FROM feeding_information WHERE username = $1', [username]);
+        const feedingInfoExists = feedingResult.rows.length > 0;
+
+        let isNewUser = 'New: no';
+        if (!feedingInfo.length && !feedingInfoExists) { // Check if there's no scheduled feeding and no feeding information exists
+            isNewUser = 'New: yes';
+        }
+
+        // Send message to the client about new user status
+        const messageToSend = { isNewUser };
+        console.log('Message being sent to client:', messageToSend);
 
         if (!isMachinePaused && feedingInfo.length > 0) { // Check if the machine is not paused
             const info = feedingInfo[0];
             const dataToSend = { id: info.id, fed: true, amount: info.amount, username: info.username };
             console.log('Data being sent to client:', dataToSend);
-  // Check if the username exists in feeding_information
-        const feedingResult = await pool.query('SELECT * FROM feeding_information WHERE username = $1', [info.username]);
-        const feedingInfoExists = feedingResult.rows.length > 0;
 
-        let isNewUser = 'New: no';
-        if (!feedingInfo.length && !feedingInfoExists) { // Fix this line
-            isNewUser = 'New: yes';
-        }
-        const messageToSend = { isNewUser };
-        console.log('Message being sent to client:', messageToSend);
             // Broadcast the new feeding information to all connected clients
             wss.clients.forEach(function each(client) {
                 if (client.readyState === WebSocket.OPEN) {
-                    client.send(JSON.stringify(messageToSend));
                     client.send(JSON.stringify(dataToSend));
-                    
                 }
             });
         }
+
+        // Send both feeding information and the message about new user status to the client
+        wss.clients.forEach(function each(client) {
+            if (client.readyState === WebSocket.OPEN) {
+                if (feedingInfo.length > 0) {
+                    client.send(JSON.stringify(dataToSend));
+                }
+                client.send(JSON.stringify(messageToSend));
+            }
+        });
     } catch (error) {
         console.error('Error checking scheduled feeding:', error);
     }
@@ -317,7 +325,9 @@ async function checkScheduledFeeding(username) {
 // Run checkScheduledFeeding once
 checkScheduledFeeding();
 
+// Run checkScheduledFeeding every second
 setInterval(checkScheduledFeeding, 1000);
+
 
 // Route to pause scheduled feeding checks DOMINIC NGUYEN; requiredAuth added by Nathan Davis
 app.post('/pause-machine', requireAuth, async (req, res) => {
