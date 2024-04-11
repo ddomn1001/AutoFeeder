@@ -276,13 +276,13 @@ let scheduledFeedingInterval;
 let isMachinePaused = false; // Flag to track machine pause state
 
 // Function to check and trigger scheduled feeding DOMINIC NGUYEN
-async function checkScheduledFeeding() {
+async function checkScheduledFeeding(username) {
     const currentTime = new Date().toLocaleTimeString('en-US', { hour12: false });
 
     try {
         const result = await pool.query('SELECT * FROM scheduled_feeding_information WHERE feeding_time = $1', [currentTime]);
         const feedingInfo = result.rows;
-        const username = req.session.username; //
+
         // Check if the username exists in feeding_information
         const feedingResult = await pool.query('SELECT * FROM feeding_information WHERE username = $1', [username]);
         const feedingInfoExists = feedingResult.rows.length > 0;
@@ -295,7 +295,7 @@ async function checkScheduledFeeding() {
         // Send message to the client
         const messageToSend = { isNewUser };
         console.log('Message being sent to client:', messageToSend);
-        // console.log(isMachinePaused); Used this log statement solely for testing purposes. As it runs, shows boolean value once every second.
+
         if (!isMachinePaused && feedingInfo.length > 0) { // Check if the machine is not paused
             const info = feedingInfo[0];
             const dataToSend = { id: info.id, fed: true, amount: info.amount, username: info.username };
@@ -318,7 +318,10 @@ async function checkScheduledFeeding() {
 checkScheduledFeeding();
 
 // Run checkScheduledFeeding every second
-setInterval(checkScheduledFeeding, 1000);
+setInterval(() => {
+    checkScheduledFeeding(req.session.username); // Pass the username here
+}, 1000);
+
 
 // Route to pause scheduled feeding checks DOMINIC NGUYEN; requiredAuth added by Nathan Davis
 app.post('/pause-machine', requireAuth, async (req, res) => {
