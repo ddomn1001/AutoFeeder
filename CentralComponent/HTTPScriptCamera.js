@@ -164,6 +164,12 @@ app.post('/update-scheduled-feeding-info', requireAuth, async (req, res) => {
         wss.clients.forEach(function each(client) {
             if (client.readyState === WebSocket.OPEN) {
                 client.send(JSON.stringify(dataToSend));
+               
+            }
+        });
+                wss.clients.forEach(function each(client) {
+            if (client.readyState === WebSocket.OPEN) {
+                client.send(JSON.stringify(dataToSend));
                 client.send(JSON.stringify(messageToSend));
             }
         });
