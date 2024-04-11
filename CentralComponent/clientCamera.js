@@ -1,4 +1,4 @@
-//SERVERSIDE CODE 
+//SERVERSIDE CODE
 const express = require('express');
 const https = require('https');
 const fs = require('fs');
@@ -44,8 +44,8 @@ app.get('/', (req, res) => {
 const pool = new Pool({
     user: 'ubuntu',
     host: 'localhost',
-    database: 'AutoFeeder',
-    password: 'checkout',
+    database: 'autofeeder',
+    password: 'Checkout',
     port: 5432,
 });
 
@@ -86,15 +86,15 @@ app.post('/login', async (req, res) => {
 
 // middleware that checks for the session identifier in each request; owned by Nathan Davis
 const requireAuth = (req, res, next) => {
-    if (req.session.userId) {
+    if (req.session.username) {
         next(); // User is authenticated, continue to next middleware
     } else {
         res.redirect('Home.html'); // User is not authenticated, redirect to login page
     }
 }
 
-// Route to update feeding information DOMINIC NGUYEN
-app.post('/update-feeding-info', async (req, res) => {
+// Route to update feeding information DOMINIC NGUYEN, requireAuth added by Nathan Davis
+app.post('/update-feeding-info', requireAuth, async (req, res) => {
     const { fed, amount } = req.body;
     const username = req.session.username; // Retrieve username from session
 
@@ -107,19 +107,6 @@ app.post('/update-feeding-info', async (req, res) => {
 
         console.log('Inserted feeding information:', insertedInfo);
 
-        // Check if the username exists in feeding_information
-        const feedingResult = await pool.query('SELECT * FROM feeding_information WHERE username = $1', [username]);
-        const feedingInfoExists = feedingResult.rows.length > 0;
-
-        let isNewUser = 'New: no';
-        if (!feedingInfoExists) { // Check if there's no feeding information for the user
-            isNewUser = 'New: yes';
-        }
-
-        // Send message to the client about new user status
-        const messageToSend = { isNewUser };
-        console.log('Message being sent to client:', messageToSend);
-
         // Send the new feeding information to the client
         const dataToSend = { id: insertedInfo.id, fed, amount, username };
         console.log('Data being sent to client:', dataToSend); // Add this line for logging
@@ -128,16 +115,6 @@ app.post('/update-feeding-info', async (req, res) => {
         wss.clients.forEach(function each(client) {
             if (client.readyState === WebSocket.OPEN) {
                 client.send(JSON.stringify(dataToSend));
-            }
-        });
-
-        // Send both feeding information and the message about new user status to the client
-        wss.clients.forEach(function each(client) {
-            if (client.readyState === WebSocket.OPEN) {
-                if (feedingInfoExists) {
-                    client.send(JSON.stringify(dataToSend));
-                }
-                client.send(JSON.stringify(messageToSend));
             }
         });
 
@@ -150,8 +127,8 @@ app.post('/update-feeding-info', async (req, res) => {
 
 
 
-// Route to update scheduled feeding information DOMINIC NGUYEN
-app.post('/update-scheduled-feeding-info', async (req, res) => {
+// Route to update scheduled feeding information DOMINIC NGUYEN; requireAuth added by Nathan Davis
+app.post('/update-scheduled-feeding-info', requireAuth, async (req, res) => {
     const { time, amount } = req.body;
     const username = req.session.username; // Retrieve username from session
 
@@ -246,7 +223,7 @@ app.get('/feeding-information', async (req, res) => {
 
     try {
         // Query the database to retrieve feeding information for the logged-in user
-        const result = await pool.query('SELECT * FROM scheduled_feeding_information WHERE username = $1', [username]);
+        const result = await pool.query('SELECT * FROM scheduled_feeding_information WHERE username = $1 ORDER BY feeding_time;', [username]);
 
         const feedingInfo = result.rows; // Retrieve the feeding information
 
@@ -257,9 +234,26 @@ app.get('/feeding-information', async (req, res) => {
     }
 });
 
- 
-// Route to update scheduled feeding information DOMINIC NGUYEN
-app.post('/edit-scheduled-feeding-info', async (req, res) => {
+/*Route to retrieve user information for the logged-in user JT COLEMAN
+app.get('/login', async (req, res) => {
+const username = req.session.username; // Retrieve username from session
+
+try {
+    // Query the database to retrieve feeding information for the logged-in user
+    const result = await pool.query('SELECT * FROM Login WHERE username = $1', [username]);
+
+    const loginInfo = result.rows; // Retrieve the user information
+
+    res.status(200).json(loginInfo); // Return the user information in the response
+} catch (error) {
+    console.error('Error retrieving login information:', error);
+    res.status(500).json({ message: 'Internal server error' });
+}
+});
+*/
+
+// Route to update scheduled feeding information DOMINIC NGUYEN; requireAuth added by Nathan Davis
+app.post('/edit-scheduled-feeding-info', requireAuth, async (req, res) => {
     const { time, amount } = req.body;
     const username = req.session.username; // Retrieve username from session
 
@@ -282,7 +276,8 @@ app.post('/edit-scheduled-feeding-info', async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 });
-
+/*
+let scheduledFeedingInterval;
 // Function to check and trigger scheduled feeding DOMINIC NGUYEN
 async function checkScheduledFeeding() {
     const currentTime = new Date().toLocaleTimeString('en-US', { hour12: false });
@@ -307,12 +302,58 @@ async function checkScheduledFeeding() {
         console.error('Error checking scheduled feeding:', error);
     }
 }
+*/
+
+let scheduledFeedingInterval;
+let isMachinePaused = false; // Flag to track machine pause state
+
+// Function to check and trigger scheduled feeding DOMINIC NGUYEN
+async function checkScheduledFeeding() {
+    const currentTime = new Date().toLocaleTimeString('en-US', { hour12: false });
+
+    try {
+        const result = await pool.query('SELECT * FROM scheduled_feeding_information WHERE feeding_time = $1', [currentTime]);
+        const feedingInfo = result.rows;
+        // console.log(isMachinePaused); Used this log statement solely for testing purposes. As it runs, shows boolean value once every second.
+        if (!isMachinePaused && feedingInfo.length > 0) { // Check if the machine is not paused
+            const info = feedingInfo[0];
+            const dataToSend = { id: info.id, fed: true, amount: info.amount, username: info.username };
+            console.log('Data being sent to client:', dataToSend);
+
+            // Broadcast the new feeding information to all connected clients
+            wss.clients.forEach(function each(client) {
+                if (client.readyState === WebSocket.OPEN) {
+                    client.send(JSON.stringify(dataToSend));
+                }
+            });
+        }
+    } catch (error) {
+        console.error('Error checking scheduled feeding:', error);
+    }
+}
 
 // Run checkScheduledFeeding once
 checkScheduledFeeding();
 
 // Run checkScheduledFeeding every second
 setInterval(checkScheduledFeeding, 1000);
+
+// Route to pause scheduled feeding checks DOMINIC NGUYEN; requiredAuth added by Nathan Davis
+app.post('/pause-machine', requireAuth, async (req, res) => {
+    console.log('Pause machine route called');
+    clearInterval(scheduledFeedingInterval); // Stop the interval
+    isMachinePaused = true; // Set machine pause flag
+    res.status(200).json({ message: 'Machine paused successfully' });
+});
+
+// Route to start scheduled feeding checks DOMINIC NGUYEN; requireAuth added by Nathan Davis
+app.post('/start-machine', requireAuth, async (req, res) => {
+    console.log('Start machine route called');
+    isMachinePaused = false; // Reset machine pause flag
+    checkScheduledFeeding(); // Run immediately
+    scheduledFeedingInterval = setInterval(checkScheduledFeeding, 1000); // Run every second
+    res.status(200).json({ message: 'Machine started successfully' });
+});
 
 
 // WebSocket connection event handler DOMINIC NGUYEN
@@ -322,6 +363,7 @@ wss.on('connection', function connection(ws) {
         // Parse the received message as a JSON object
         const message = JSON.parse(data);
         console.log('Received message from client:', message);
+        console.log('WORKING');
 
         // Check if the message contains the 'success' field
         if ('success' in message && message.success === true) {
@@ -329,12 +371,67 @@ wss.on('connection', function connection(ws) {
             try {
                 // Update fed value in the feeding_information table
                 await pool.query('UPDATE feeding_information SET fed = true WHERE id = $1;', [message.id]);
-                console.log('Fed value updated successfully');
+                console.log('Fed value updated successfully working');
+                console.log('working');
             } catch (error) {
                 console.error('Error updating fed value:', error);
             }
         }
+
+         console.log('WORKING');
+
+        /*if (('low' in message && message.status === 'low') {
+            || ('Empty' in message && message.status === 'Empty')) {
+            console.log('Food levels low in container');
+            //send alert to front end to notify user of food level
+            res.status(200).json({message:"Food levels in the container are {0}", message.status});
+
+        } else
+        {
+            console.log('Food levels are good');
+            res.status(401).json({message:"Food levels in the container are good"});
+
+        } */
+
+
     });
+});
+
+
+/*
+const cameraFeed = document.getElementByID('cameraFeed');
+ws.onmessage = function(event) {
+        const data = event.data;
+        if (data instanceof Blob) {
+                const blob = new Blob([data], {type:'video/mp4'});
+                const url = URL.createObjectURL(blob);
+                cameraFeed.src = url;
+        }
+
+}*/
+
+// Route to delete a schedule line
+app.delete('/delete-schedule-line/:username/:time', requireAuth, async (req, res) => {
+    const username = req.params.username; // Retrieve username from URL parameter
+    const time = req.params.time; // Retrieve time from URL parameter
+
+    console.log('Received request to delete schedule line:', { username, time });
+
+    try {
+        // Delete the schedule line from the database
+        const result = await pool.query('DELETE FROM scheduled_feeding_information WHERE username = $1 AND feeding_time = $2 RETURNING *', [username, time]);
+
+        if (result.rowCount > 0) {
+            console.log('Schedule line deleted successfully');
+            res.status(200).json({ message: 'Schedule line deleted successfully' });
+        } else {
+            console.error('Failed to delete schedule line');
+            res.status(404).json({ message: 'Schedule line not found' });
+        }
+    } catch (error) {
+        console.error('Error deleting schedule line:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
 });
 
 // DOMINIC NGUYEN
@@ -342,3 +439,20 @@ const port = 443;
 httpsServer.listen(port, () => {
     console.log(`Server is running on https://www.jmuautofeeder.com on port:${port}`);
 });
+/*
+app.get('/user/:username', async (req, res) => {
+    const username = req.params.username;
+    try {
+        const userData = await pool.query('SELECT fname, lname, email FROM login WHERE username = $1', [username]);
+        if (userData.rows.length > 0) {
+            const { fname, lname, email } = userData.rows[0];
+            res.json({ fname, lname, email });
+        } else {
+            res.status(404).json({ message: 'User not found' });
+        }
+    } catch (error) {
+        //console.error('Error fetching user information:', error);
+        //cres.status(500).json({ message: 'Internal server error' });
+    }
+});
+*/
