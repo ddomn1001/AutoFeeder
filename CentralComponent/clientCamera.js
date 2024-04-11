@@ -101,11 +101,7 @@ app.post('/update-feeding-info', async (req, res) => {
     console.log('Received feeding information:', { fed, amount, username });
 
     try {
-        const result = await pool.query('INSERT INTO feeding_information (username, fed, amount) VALUES ($1, $2, $3) RETURNING *', [username, fed, amount]);
 
-        const insertedInfo = result.rows[0]; // Retrieve the inserted feeding information
-
-        console.log('Inserted feeding information:', insertedInfo);
 
         // Check if the username exists in feeding_information
         const feedingResult = await pool.query('SELECT * FROM feeding_information WHERE username = $1', [username]);
@@ -115,7 +111,11 @@ app.post('/update-feeding-info', async (req, res) => {
         if (!feedingInfoExists) { // Check if there's no feeding information for the user
             isNewUser = 'New: yes';
         }
+        const result = await pool.query('INSERT INTO feeding_information (username, fed, amount) VALUES ($1, $2, $3) RETURNING *', [username, fed, amount]);
 
+        const insertedInfo = result.rows[0]; // Retrieve the inserted feeding information
+
+        console.log('Inserted feeding information:', insertedInfo);
         // Send message to the client about new user status
         const messageToSend = { isNewUser };
         console.log('Message being sent to client:', messageToSend);
