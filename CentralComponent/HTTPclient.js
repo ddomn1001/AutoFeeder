@@ -27,7 +27,7 @@ ws.on('message', async function incoming(data) {
         // Define a function to run the motor2.py script,dispensing the food
         const runScript = async () => {
             return new Promise((resolve, reject) => {
-                exec('python motor2.py', (error, stdout, stderr) => {
+                exec('python testScript.py', (error, stdout, stderr) => {
                     if (error) {
                         console.error(`Error executing script: ${error}`);
                         reject(error);
