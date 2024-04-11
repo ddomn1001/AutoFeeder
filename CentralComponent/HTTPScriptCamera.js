@@ -317,11 +317,7 @@ async function checkScheduledFeeding(username) {
 // Run checkScheduledFeeding once
 checkScheduledFeeding();
 
-// Run checkScheduledFeeding every second
-setInterval(() => {
-    checkScheduledFeeding(req.session.username); // Pass the username here
-}, 1000);
-
+setInterval(checkScheduledFeeding, 1000);
 
 // Route to pause scheduled feeding checks DOMINIC NGUYEN; requiredAuth added by Nathan Davis
 app.post('/pause-machine', requireAuth, async (req, res) => {
