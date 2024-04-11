@@ -106,6 +106,18 @@ app.post('/update-feeding-info', async (req, res) => {
         const insertedInfo = result.rows[0]; // Retrieve the inserted feeding information
 
         console.log('Inserted feeding information:', insertedInfo);
+// Check if the username exists in feeding_information
+        const feedingResult = await pool.query('SELECT * FROM feeding_information WHERE username = $1', [username]);
+        const feedingInfoExists = feedingResult.rows.length > 0;
+
+        let isNewUser = 'New: no';
+        if (!feedingInfo.length && !feedingInfoExists) { // Check if there's no scheduled feeding and no feeding information exists
+            isNewUser = 'New: yes';
+        }
+
+        // Send message to the client about new user status
+        const messageToSend = { isNewUser };
+        console.log('Message being sent to client:', messageToSend);
 
         // Send the new feeding information to the client
         const dataToSend = { id: insertedInfo.id, fed, amount, username };
@@ -118,12 +130,22 @@ app.post('/update-feeding-info', async (req, res) => {
             }
         });
 
+                // Send both feeding information and the message about new user status to the client
+        wss.clients.forEach(function each(client) {
+            if (client.readyState === WebSocket.OPEN) {
+                if (feedingInfo.length > 0) {
+                    client.send(JSON.stringify(dataToSend));
+                }
+                client.send(JSON.stringify(messageToSend));
+            }
+        });
         res.status(200).json({ message: 'Feeding information updated successfully', insertedInfo }); // Return the inserted feeding information in the response
     } catch (error) {
         console.error('Error updating feeding information:', error);
         res.status(500).json({ message: 'Internal server error' });
     }
 });
+
 
 
 
