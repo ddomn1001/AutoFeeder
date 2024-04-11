@@ -93,8 +93,8 @@ const requireAuth = (req, res, next) => {
     }
 }
 
-// Route to update feeding information DOMINIC NGUYEN, requireAuth added by Nathan Davis
-app.post('/update-feeding-info', requireAuth, async (req, res) => {
+// Route to update feeding information DOMINIC NGUYEN
+app.post('/update-feeding-info', async (req, res) => {
     const { fed, amount } = req.body;
     const username = req.session.username; // Retrieve username from session
 
@@ -107,6 +107,19 @@ app.post('/update-feeding-info', requireAuth, async (req, res) => {
 
         console.log('Inserted feeding information:', insertedInfo);
 
+        // Check if the username exists in feeding_information
+        const feedingResult = await pool.query('SELECT * FROM feeding_information WHERE username = $1', [username]);
+        const feedingInfoExists = feedingResult.rows.length > 0;
+
+        let isNewUser = 'New: no';
+        if (!feedingInfoExists) { // Check if there's no feeding information for the user
+            isNewUser = 'New: yes';
+        }
+
+        // Send message to the client about new user status
+        const messageToSend = { isNewUser };
+        console.log('Message being sent to client:', messageToSend);
+
         // Send the new feeding information to the client
         const dataToSend = { id: insertedInfo.id, fed, amount, username };
         console.log('Data being sent to client:', dataToSend); // Add this line for logging
@@ -115,6 +128,16 @@ app.post('/update-feeding-info', requireAuth, async (req, res) => {
         wss.clients.forEach(function each(client) {
             if (client.readyState === WebSocket.OPEN) {
                 client.send(JSON.stringify(dataToSend));
+            }
+        });
+
+        // Send both feeding information and the message about new user status to the client
+        wss.clients.forEach(function each(client) {
+            if (client.readyState === WebSocket.OPEN) {
+                if (feedingInfoExists) {
+                    client.send(JSON.stringify(dataToSend));
+                }
+                client.send(JSON.stringify(messageToSend));
             }
         });
 
