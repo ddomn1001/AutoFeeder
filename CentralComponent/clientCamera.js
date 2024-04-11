@@ -1,51 +1,25 @@
-//SERVERSIDE CODE
+//SERVERSIDE CODE 
 const express = require('express');
-const http = require('http');
+const https = require('https');
+const fs = require('fs');
 const bodyParser = require('body-parser');
 const { Pool } = require('pg');
 const WebSocket = require('ws');
 const jwt = require('jsonwebtoken');
-const session = require('express-session');
+// const session = require('express-session');
 const path = require('path');
-const fs = require('fs');
+
 const app = express();
-const server = http.createServer(app);
 
 app.use(bodyParser.json());
-app.use(express.static('/home/ubuntu/Autofeeder'));
 
-// Route for the root URL
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'Home.html'));
-});
-
-// Session middleware setup
-app.use(session({
-    secret: 'fn889bkh',
-    resave: false,
-    saveUninitialized: true,
-    cookie: { secure: false }
-}));
-
-// WebSocket server setup
-const wss = new WebSocket.Server({ server });
-
-// Initialize PostgreSQL Pool
-const pool = new Pool({
-    user: 'ubuntu',
-    host: 'localhost',
-    database: 'autofeeder',
-    password: 'Checkout',
-    port: 5432,
-});
-
-// Function to generate JWT token
-function generateAuthToken(username) {
-    return jwt.sign({ username }, 'c8hhdj992');
-}
+// Load SSL certificate and key DOMINIC NGUYEN
+const privateKey = fs.readFileSync('/etc/letsencrypt/live/www.jmuautofeeder.com/privkey.pem', 'utf8');
+const certificate = fs.readFileSync('/etc/letsencrypt/live/www.jmuautofeeder.com/fullchain.pem', 'utf8');
+const credentials = { key: privateKey, cert: certificate };
 
 // Session middleware setup; owned my Nathan Davis
-//const session = require('express-session');
+const session = require('express-session');
 app.use(session({
     secret: 'fn889bkh',
     resave: false,
@@ -53,6 +27,32 @@ app.use(session({
     cookie: { secure: true }
 }));
 
+// Create HTTPS server DOMINIC NGUYEN
+const httpsServer = https.createServer(credentials, app);
+
+// WebSocket server setup DOMINIC NGUYEN
+const wss = new WebSocket.Server({ server: httpsServer });
+// Serve static files from the root directory
+app.use(express.static('/home/ubuntu/Autofeeder'));
+
+// Route for the root URL DOMINIC NGUYEN
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'Home.html'));
+});
+
+//DOMINIC NGUYEN
+const pool = new Pool({
+    user: 'ubuntu',
+    host: 'localhost',
+    database: 'AutoFeeder',
+    password: 'checkout',
+    port: 5432,
+});
+
+// Function to generate JWT token DOMINIC NGUYEN
+function generateAuthToken(username) {
+    return jwt.sign({ username }, 'c8hhdj992');
+}
 // Create account route DOMINIC NGUYEN
 app.post('/create-account', async (req, res) => {
     const { email, newUsername, newPassword, fname, lname } = req.body;
@@ -150,8 +150,6 @@ app.post('/update-feeding-info', async (req, res) => {
 
 
 
-
-
 // Route to update scheduled feeding information DOMINIC NGUYEN
 app.post('/update-scheduled-feeding-info', async (req, res) => {
     const { time, amount } = req.body;
@@ -194,6 +192,10 @@ app.post('/update-scheduled-feeding-info', async (req, res) => {
         }
     }
 });
+
+
+
+
 
 
 // Function to parse time input and convert it to a valid format for PostgreSQL DOMINIC NGUYEN
@@ -255,7 +257,7 @@ app.get('/feeding-information', async (req, res) => {
     }
 });
 
-
+ 
 // Route to update scheduled feeding information DOMINIC NGUYEN
 app.post('/edit-scheduled-feeding-info', async (req, res) => {
     const { time, amount } = req.body;
@@ -312,7 +314,8 @@ checkScheduledFeeding();
 // Run checkScheduledFeeding every second
 setInterval(checkScheduledFeeding, 1000);
 
-// WebSocket connection event handler
+
+// WebSocket connection event handler DOMINIC NGUYEN
 wss.on('connection', function connection(ws) {
     // WebSocket message handler for client success notification
     ws.on('message', async function incoming(data) {
@@ -334,154 +337,8 @@ wss.on('connection', function connection(ws) {
     });
 });
 
-
-/*
-wss.on('connection', function connection(ws) {
-    console.log('WebSocket connection established');
-
-    // WebSocket message handler
-    ws.on('message', function incoming(data) {
-        // Handle incoming video stream data
-        console.log('Received video stream data from client:', data);
-
-        // Write video stream data to file (example)
-        fs.appendFileSync('videoStream.mp4', data);
-    });
-});
-*/
-// WebSocket connection event handlers
-/*wss.on('connection', function connection(ws) {
-    console.log('WebSocket connection established');
-
-    // WebSocket message handler
-    ws.on('message', function incoming(data) {
-        // Handle incoming video stream data
-        console.log('Received video stream data from client:', data);
-
-        // Write video stream data to file (example)
-        fs.appendFileSync('videoStream.mp4', data);
-
-        // Broadcast the received data to all WebSocket clients (optional)
-        wss.clients.forEach(function each(client) {
-            if (client !== ws && client.readyState === WebSocket.OPEN) {
-                client.send(data);
-            }
-        });
-    });
-});*/
-const NodeWebcam = require('node-webcam');
-//const fs = require('fs');
-
-// Create a WebSocket server
-//const wss = new WebSocket.Server({ port: 8080 });
-
-// Create webcam instance
-const Webcam = NodeWebcam.create({
-    width: 1280,
-    height: 720,
-    quality: 100,
-    delay: 0,
-    saveShots: false,
-    output: "jpeg",
-    device: false,
-    callbackReturn: "buffer" // Capture image as buffer
-});
-
-// Function to capture image from webcam, save it as PNG or JPG, and send it via WebSocket
-/*
-async function captureAndSendImage(ws) {
-    Webcam.capture("", async function(err, data) {
-        if (err) {
-            console.error("Error capturing image:", err);
-        } else {
-            console.log("Image captured");
-            try {
-                // Save captured image to a file as PNG or JPG
-                const fileName = `/home/ubuntu/Autofeeder/captured_image_${Date.now()}.jpg`; // Adjust the file path and format as needed
-                fs.writeFileSync(fileName, data);
-
-                console.log("Image saved to:", fileName);
-
-                // Send the file name to the client via WebSocket
-                ws.send(JSON.stringify({ image: fileName }));
-            } catch (error) {
-                console.error("Error saving image:", error);
-            }
-        }
-    });
-}
-*/
-// Function to capture image from webcam, save it as PNG or JPG, and send it via WebSocket
-/*
-async function captureAndSendImage(ws) {
-    Webcam.capture("", async function(err, data) {
-        if (err) {
-            console.error("Error capturing image:", err);
-            return; // Exit function early if there's an error
-        }
-
-        console.log("Image captured");
-        try {
-            // Save captured image to a file as PNG or JPG
-            const fileName = `/home/ubuntu/Autofeeder/captured_image_${Date.now()}.jpg`; // Adjust the file path and format as needed
-            fs.writeFileSync(fileName, data);
-
-            console.log("Image saved to:", fileName);
-
-            // Send the file name to the client via WebSocket
-            ws.send(JSON.stringify({ image: fileName }));
-        } catch (error) {
-            console.error("Error saving image:", error);
-        }
-    });
-}
-*/
-/*
-// WebSocket connection event handler
-wss.on('connection', function connection(ws) {
-    console.log('WebSocket connection established');
-
-    // When a message is received from the client
-    ws.on('message', function incoming(message) {
-        console.log('Received message from client:', message);
-
-        // Parse the received message as a JSON object
-        const parsedMessage = JSON.parse(message);
-
-        // Check if the message contains the 'image' field
-        if (parsedMessage.image) {
-            const imageData = parsedMessage.image;
-
-            // Generate a unique filename for the captured image
-            const fileName = `/home/ubuntu/Autofeeder/captured_images/captured_image_${Date.now()}.jpg`;
-
-            // Write the image data to a file
-            fs.writeFile(fileName, imageData, 'base64', function(err) {
-                if (err) {
-                    console.error('Error saving image:', err);
-                } else {
-                    console.log('Image saved successfully:', fileName);
-                }
-            });
-        }
-    });
-});
-*/
-
-
-// Error handler for WebSocket server
-wss.on('error', function error(err) {
-    console.error('WebSocket server error:', err);
-});
-
-// Close handler for WebSocket server
-wss.on('close', function close() {
-    console.log('WebSocket server closed');
-});
-// Define HTTP port
-const port = 80;
-
-// Start the HTTP server
-server.listen(port, () => {
-    console.log(`Server is running on http://www.jmuautofeeder.com on port:${port}`);
+// DOMINIC NGUYEN
+const port = 443;
+httpsServer.listen(port, () => {
+    console.log(`Server is running on https://www.jmuautofeeder.com on port:${port}`);
 });
