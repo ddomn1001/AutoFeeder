@@ -1,5 +1,5 @@
 //Originally Written by Dominick Nyguen
-//Modified by Hale Anderson and Luke Saunders
+//Modified by Hale Anderson, Luke Saunders, Tyler Powell, Mason S
 const WebSocket = require('ws');
 const { exec } = require('child_process');
 
@@ -24,8 +24,6 @@ wss.on('message', async function incoming(data) {
         // Parse the amount from the message
         const amount = parseInt(message.amount);
 
-        // Measure distance and send status message before running the motor script
-        await measureDistanceAndSendStatus(message.id);
 
         // Run the motor script 'amount' times sequentially
         for (let i = 0; i < amount; i++) {
@@ -44,6 +42,20 @@ wss.on('message', async function incoming(data) {
 
         // Measure distance and send status message after running the motor script loop
         await measureDistanceAndSendStatus(message.id);
+        
+        // Take picture and send json file after encrypting
+        try {
+            // Check if username is provided in the message
+            if ('username' in message) {
+                // Call the takePicture function with the provided username
+                await takePicture(message.username);
+                console.log("Picture taken and uploaded successfully.");
+            } else {
+                console.error("Username not provided in the message.");
+            }
+        } catch (error) {
+            console.error("Error taking picture:", error);
+        }
     }
 });
 
@@ -97,6 +109,21 @@ function measureDistance() {
             } else {
                 const distance = parseFloat(stdout.trim());
                 resolve(distance);
+            }
+        });
+    });
+}
+
+// Function to execute camera script
+function takePicture(username) {
+    return new Promise((resolve, reject) => {
+        exec(`python camera.py ${username}`, (error, stdout, stderr) => {
+            if (error) {
+                console.error(`Error executing camera.py: ${error}`);
+                reject(error);
+            } else {
+                console.log(`camera.py Executed: ${stdout}`);
+                resolve();
             }
         });
     });
