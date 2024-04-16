@@ -46,7 +46,7 @@ const pool = new Pool({
     host: 'localhost',
     database: 'AutoFeeder',
     password: 'checkout',
-    port: 5432,
+    port: 8963,
 });
 
 // Function to generate JWT token DOMINIC NGUYEN
