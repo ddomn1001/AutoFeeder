@@ -1,69 +1,55 @@
-# Originally Written by Tyler Powell and Luke Saunders
-# Modified by Tyler Powell
+# camera.py
 
-import os
-import asyncio
-import base64
 import cv2
-import websockets
-import time
-import json
+import base64
+import os
+from datetime import datetime
 
-os.environ['QT_QPA_PLATFORM'] = 'xcb'  # Set Qt platform to X11
+def capture_image_and_save():
+    # Capture image from camera
+    camera = cv2.VideoCapture(0)
+    ret, frame = camera.read()
+    camera.release()
 
-async def upload_image(username):
-    # async with websockets.connect('wss://www.jmuautofeeder.com') as websocket:
-        try:
-            # Capture image from camera using V4L2 backend
-            camera = cv2.VideoCapture(0, cv2.CAP_V4L2)
-            ret, frame = camera.read()
-            camera.release()
+    if not ret:
+        print("Failed to capture image from webcam.")
+        return None
 
-            if not ret:
-                print("Failed to capture image from webcam.")
-                return
-        
-            # Generate a unique filename based on date, time, and username TIME DATE ADDED BY DOMINIC
-            current_time = time.strftime("%Y-%m-%d %H:%M:%S")
-            filename = f"{current_time}_{username}.jpg"
+    # Convert image to JPEG format
+    _, buffer = cv2.imencode('.jpg', frame)
+    
+    # Convert image buffer to Base64 string
+    image_data_base64 = base64.b64encode(buffer).decode('utf-8')
 
-            # Save the image with the generated filename in the "images" folder
-            image_folder = "images"
-            if not os.path.exists(image_folder):
-                os.makedirs(image_folder)
-            
-            # Check if the number of images in the folder exceeds 25
-            images = os.listdir(image_folder)
-            if len(images) >= 25:
-                # Sort images by creation time and delete the oldest one
-                images.sort(key=lambda x: os.path.getctime(os.path.join(image_folder, x)))
-                os.remove(os.path.join(image_folder, images[0]))
+    # Create folder if it doesn't exist
+    image_folder = "images"
+    if not os.path.exists(image_folder):
+        os.makedirs(image_folder)
 
-            # Write the image to file
-            filepath = os.path.join(image_folder, filename)
-            cv2.imwrite(filepath, frame)
+    # Get list of existing image files
+    images = os.listdir(image_folder)
 
-            # Encode image
-            _, buffer = cv2.imencode('.jpg', frame)
-            jpg_as_text = base64.b64encode(buffer)
+    # Check if number of images exceeds a limit (e.g., 25)
+    image_limit = 25
+    if len(images) >= image_limit:
+        # Sort images by creation time
+        images.sort(key=lambda x: os.path.getctime(os.path.join(image_folder, x)))
 
-            # Create a dictionary to hold username, datetime, and image data
-            data = {
-                "username": username,
-                "datetime": current_time,  # Include datetime value
-                "image_data": jpg_as_text.decode('utf-8')  # Convert bytes to string
-            }
+        # Delete the oldest images to maintain the limit
+        for i in range(len(images) - image_limit + 1):
+            os.remove(os.path.join(image_folder, images[i]))
 
-            # Convert dictionary to JSON string
-            json_data = json.dumps(data)
+    # Generate filename based on current date and time
+    filename = datetime.now().strftime("%Y-%m-%d_%H-%M-%S") + ".jpg"
 
-            # Send JSON data over WebSocket
-            await websocket.send(json_data)
-            print("Image uploaded successfully.")
+    # Write the image to file
+    with open(os.path.join(image_folder, filename), 'wb') as f:
+        f.write(buffer)
 
-        except Exception as e:
-            print(f"An error occurred: {e}")
+    return image_data_base64
 
 # Example usage
-username = "test"
-asyncio.run(upload_image(username))
+if __name__ == "__main__":
+    image_data = capture_image_and_save()
+    if image_data:
+        print(image_data)
