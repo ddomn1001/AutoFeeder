@@ -1,40 +1,33 @@
-/* CSS style page for all pages */
+/* CSS style page for all pages - Created by Tim and Aubrey */
 body {
     background-color: #333333;
     color: white;
     margin: 0;
     padding: 0;
-    font-family: Cambria;
+    font-family: Arial;
+
+    min-height: 100vh;
 }
 
 nav {
     background-color: #450084;
     color: white;
-    overflow: hidden;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    position: fixed;
+    width: 100%;
+    border-bottom: 2px solid #fff;
+    z-index: 1000;
 
 }
-
-nav a {
-    display: block;
-    color: white;
-    text-align: center;
-    padding: 14px 20px;
-    text-decoration: none;
-}
-
 
 nav img {
     height: 150px;
     margin: 0;
-
-}
-
-nav .logo-container {
     display: flex;
-    align-items: center;
+    justify-content: flex-start;
+
 }
 
 nav .welcome-message {
@@ -42,53 +35,264 @@ nav .welcome-message {
     font-size: 16px;
 }
 
-.page-title {
-    font-size: 30px;
+
+
+#leftBox {
+    width: 600px;
+    background-color: #450084;
+    padding: 20px;
+    text-align: center;
+    font-size: 50px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: 2px solid #fff;
+    display: flex;
+}
+.welcome-text {
+    font-size: 18px;
+    margin-bottom: 20px;
+    text-align: center;
 }
 
+
+
+.feeding-button-box {
+    position: fixed;
+    top: calc(50% + 300px);
+    left: 25%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    border: 1px solid #ccc;
+    padding: 20px;
+    background-color: #450084;
+
+}
+
+.status-button-box {
+    position: fixed;
+    top: calc(50% + 300px);
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    border: 1px solid #ccc;
+    padding: 20px;
+    background-color: #450084;
+}
+
+.camera-button-box {
+    position: fixed;
+    top: calc(50% + 300px);
+    left: 75%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    border: 1px solid #ccc;
+    padding: 20px;
+    background-color: #450084;
+}
+
+/* CSS to show text on hover for each button box */
+.feeding-button-box:hover::before {
+    content: attr(data-text);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    width: max-content;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 10px;
+    border-radius: 5px;
+}
+.status-button-box:hover::before {
+    content: attr(data-text);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    width: max-content;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.camera-button-box:hover::before {
+    content: attr(data-text);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    width: max-content;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.on-demand-button-box {
+    position: fixed;
+    top: calc(50%);
+    left: 35%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    border: 1px solid #ccc;
+    padding: 20px;
+    background-color: #450084;
+    white-space: nowrap;
+}
+
+.scheduled-button-box {
+    position: fixed;
+    top: calc(50%);
+    left: 65%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    border: 1px solid #ccc;
+    padding: 20px;
+    background-color: #450084;
+    white-space: nowrap;
+}
+
+.on-demand-button-box:hover::before {
+    content: attr(data-text);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    width: max-content;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 10px;
+    border-radius: 5px;
+}
+.scheduled-button-box:hover::before {
+    content: attr(data-text);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    width: max-content;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.pause-button-box {
+    position: fixed;
+    top: calc(50% + 300px);
+    left: 75%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    border: 1px solid #ccc;
+    padding: 20px;
+    background-color: #450084;
+    white-space: nowrap;
+}
+
+.start-button-box {
+    position: fixed;
+    top: calc(50% + 300px);
+    left: 20%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    border: 1px solid #ccc;
+    padding: 20px;
+    background-color: #450084;
+    white-space: nowrap;
+}
+
+.pause-button-box:hover::before {
+    content: attr(data-text);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    width: max-content;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 10px;
+    border-radius: 5px;
+}
+.start-button-box:hover::before {
+    content: attr(data-text);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    width: max-content;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 10px;
+    border-radius: 5px;
+}
+
+
+
+
+
+
+
+
+/* Button code; Created by Aubrey Simpson */
   .buttons {
     display: flex;
     gap: 3em;
     align-items: center;
     justify-content: flex-end;
     padding: 5px;
-
-    
   }
 
   button {
     font-size: 40px;
-    color:#333333;
-    background-color: #DACCE6;
+    color:white;
+    background-color:#333333 ;
     border-radius: 10px;
+      border-color: white;
     padding: 10px;
+      margin-left: 10px;
+      font-family: Arial;
+      cursor: pointer;
   }
 
-  .cards {
-    display: flex;
-    gap: 100px;
-    justify-content: center;
-    align-items: center;
-    padding: 10px;
-    font-size: 40px;
-    color: #333333;
-    margin-top: 10%;
- }
-
- .card {
-    padding: 10px;
-    background-color: #B599CE;
-    border-radius: 20px;
- }
-
- .card a {
-     font-size: larger;
-     color: black;
- }
-
- .card a:hover{
-     color: white;
- }
+  
 
 label {
     font-size: 35px;
@@ -96,6 +300,7 @@ label {
     padding-left: 25px;
 }
 
+/* Code for scheduled feeding page buttons and containers; created by Aubrey Simpson */
 #x, #submit {
     font-size: 25px;
     margin-left: 15px;
@@ -106,52 +311,113 @@ select {
     width: 75px;
 }
 
-.addedit {
+.addEdit {
+    display: flex;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    justify-content: center;
+    align-items: center;
+    margin-top: 400px;
+}
+
+#scheduleTableContainer {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 200px;
+    height: 100vh;
+
+    text-align: center;
 }
 
-#schedule-container {
+#scheduleTableContainer table {
+    border-collapse: collapse;
+    margin: 0 auto;
+}
+#scheduleTable th,
+#scheduleTable td {
+    border: 2px solid white;
+    padding: 8px;
+    background-color: #450084;
+    font-size: 20px;
+}
+
+.user-title-container {
     display: flex;
-    flex-direction: column;
     justify-content: center;
     align-items: center;
+    text-align: center;
+    margin-bottom: 20px;
+    position: fixed;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1001;
 }
 
-/*#add {
-    display: inline;
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    margin-left: 25px;
-    margin-bottom: 10px;
+#user-title {
+    font-size: 24px;
+    color: white;
 }
-
-#edit {
-    display: inline;
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    margin-left: 200px;
-    margin-bottom: 10px;
-} */
 
 /* Add CSS styles for the popups */
 .popup {
     display: none;
     position: fixed;
     top: 50%;
-    left: 50%;
+    left: calc(50%);
     transform: translate(-50%, -50%);
-    background-color: #B599CE;
+    background-color: #450084;
     padding: 20px;
     border: 1px solid #ccc;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     z-index: 9999;
     border-radius: 20px;
-    color: #333333;
+    font-size: 16px;
+    color: white;
+
+}
+
+.loginPopup {
+    width: 310px;
+    height: 350px;
+
+}
+
+.createAccountPopup {
+    width: 1400px;
+    height: 175px;
+}
+
+.addEditPopup {
+    width: 1400px;
+}
+
+
+#loginPopup input[type="text"],
+#loginPopup input[type="password"] {
+    width: 300px; /* Adjust the width as needed */
+    height: 40px; /* Adjust the height as needed */
+    font-size: 16px; /* Optionally adjust the font size */
+
+}
+
+#loginPopup h2 {
+    font-size: 40px;
+    font-family: Arial;
+}
+
+#createAccountPopup input[type="text"],
+#createAccountPopup input[type="email"],
+#createAccountPopup input[type="password"] {
+    width: 200px;
+    height: 40px;
+    font-size: 16px;
+}
+
+.popup a:visited {
+    color: inherit;
 }
 
 .close-btn {
@@ -165,14 +431,26 @@ select {
 #loginForm,
 #createAccountForm {
     margin-top: 10px;
+    flex-direction: column;
 }
 #loginForm input,
 #createAccountForm input {
     margin-bottom: 10px;
     padding: 5px;
+    flex-direction: column;
+
+}
+
+.logout-container {
+    display: flex;
+    justify-content: center; /* Horizontally center the items */
+    margin-top: 10px; /* Adjust margin as needed */
 }
 
 
+
+
+/* Media queries; created by Aubrey Simpson */
 @media (max-width:800px) {
 
     .buttons {
@@ -183,8 +461,8 @@ select {
 
     .cards {
         display: flex;
-        flex-direction: column;
-        align-items: center;
+        flex-direction: row;
+        justify-content: space-around;
     }
 
     h1 {
@@ -192,59 +470,241 @@ select {
         align-items: center;
     }
 
+    #cameraFeed {
+        width: 100%;
+        height: auto;
+        border: 1px solid #ccc;
+    }
+
+
+
+
 }
 
-.feeding-buttons-container {
+#overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.75);
+    z-index: 1000;
+    display: none;
+}
+
+.popup.open {
+    display: block;
+}
+
+.login-form {
     display: flex;
-    justify-content: flex-start;
-
-    height: 100vh;
+    flex-direction: column;
+    align-items: center;
 }
 
-.feeding-buttons-box {
-    width: 1000px;
-    height: 115px;
-    background-color: #450084;
-    border: 1px solid #450084;
-    padding: 20px;
-    box-sizing: border-box;
+.input-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+}
+
+.input-group input {
+    width: 200px;
+    margin-bottom: 10px;
+}
+
+/* Media query for smaller screens */
+@media screen and (max-width: 600px) {
+    .input-group input {
+        width: 100%;
+    }
+}
+
+/* Media query for larger screens */
+@media screen and (min-width: 601px) {
+    .login-form {
+        max-width: 400px; /* Adjust the maximum width as needed */
+        margin: 0 auto; /* Center the form horizontally */
+    }
+}
+
+select {
+    height: 50px;
+    width: 75px;
+    font-size: 16px;
+}
+
+.userInfo {
+    font-size: 40px;
+    color: white;
+    margin-bottom: 10px;
+}
+
+
+
+#logout {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 10px 20px;
     text-align: center;
-
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin-top: 20px;
+    cursor: pointer;
 }
 
-.camera-buttons-container {
+#logout:hover {
+    background-color: #d32f2f;
+}
+
+.camera-feed-container {
     display: flex;
-    justify-content: center;
+    position: fixed;
+    justify-content: center; 
     align-items: center;
     height: 100vh;
 }
 
-.camera-buttons-box {
-    width: 1000px;
-    height: 125px;
-    background-color: #450084;
-    border: 1px solid #450084;
-    padding: 20px;
-    box-sizing: border-box;
+.camera-feed {
     text-align: center;
+    max-width: 80%;
+}
 
+/* Optional: Adjustments to the image */
+#cameraImage {
+    max-width: 100%;
+    height: auto;
+    border: 2px solid #000;
 }
 
 
-.ms-buttons-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-}
-
-.ms-buttons-box {
-    width: 1000px;
-    height: 125px;
+/* Add margin-top to move the sensor box below the button boxes */
+#sensorBox {
+    margin-top: 20px; /* Adjust as needed */
+    position: fixed;
+    top: calc(75%);
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-color: white;
+    border: 1px solid #ccc;
     background-color: #450084;
-    border: 1px solid #450084;
-    padding: 20px;
-    box-sizing: border-box;
-    text-align: center;
+}
+
+/* Style the sensor text */
+.sensor-text {
+    font-size: 18px;
+    color: white;
+
+    padding: 10px;
+    border-radius: 5px;
 
 }
+
+/* Add margin-top to move the sensor box below the button boxes */
+#cameraBox {
+    margin-top: 20px; /* Adjust as needed */
+    position: fixed;
+    top: calc(90%);
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-color: white;
+    border: 1px solid #ccc;
+    background-color: #450084;
+}
+
+/* Style the sensor text */
+.camera-text {
+    font-size: 18px;
+    color: white;
+
+    padding: 10px;
+    border-radius: 5px;
+
+}
+/* Media query for screens below 1200px */
+@media screen and (max-width: 1200px) {
+    .cards {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: fixed;
+        top: calc(50% + 110px);
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    .feeding-button-box,
+    .status-button-box,
+    .camera-button-box {
+        position: static;
+        left: 0; /* Reset left position */
+        transform: none; /* Reset transform */
+        justify-content: center;
+        align-items: center;
+        margin: 2px 0; /* Adjust as needed for vertical spacing */
+        padding: 5px; /* Adjust padding */
+        width: 100%; /* Adjust button width to fill container width */
+        max-width: 250px;
+
+    }
+
+
+}
+
+/* Media query for screens below 640px */
+@media screen and (max-width: 640px) {
+    #leftBox {
+        width: 400px; /* Adjust the width as desired */
+        font-size: 30px; /* Adjust font size accordingly */
+    }
+}
+
+@media screen and (max-width: 1450px) {
+    .on-demand-button-box,
+    .scheduled-button-box {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border: 1px solid #ccc;
+        padding: 10px; /* Reduce padding */
+        background-color: #450084;
+        margin: 10px auto; /* Add margin and center horizontally */
+        height: 50px; /* Reduce height */
+    }
+
+    .on-demand-button-box button,
+    .scheduled-button-box button {
+        font-size: 16px; /* Adjust font size */
+        padding: 5px 10px; /* Adjust padding */
+    }
+}
+
+@media screen and (max-width: 640px) {
+    .start-button-box,
+    .pause-button-box {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border: 1px solid #ccc;
+        padding: 10px; /* Reduce padding */
+        background-color: #450084;
+        margin: 10px auto; /* Add margin and center horizontally */
+        height: 50px; /* Reduce height */
+    }
+
+    .start-button-box button,
+    .pause-button-box button {
+        font-size: 16px; /* Adjust font size */
+        padding: 5px 10px; /* Adjust padding */
+    }
+}
+
+
+
+
+
+
+
+

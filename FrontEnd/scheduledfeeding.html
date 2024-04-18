@@ -1,3 +1,5 @@
+<!--Scheduled Feeding page; basic HTML created by Aubrey Simpson, additions made by Tim Hudson and Dominic Nguyen.-->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,72 +7,94 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="popups.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <title>Scheduled Feeding</title>
 </head>
 
 <body>
+<div id="overlay"></div>
 <nav>
-    <div class="logo-container">
-        <img src="JMU-Logo.png" alt="">
-        <div class="welcome-message" style="display: none;">Welcome, <span id="firstName"></span>! </div>
+    <img class='Logo' src="JMU-Logo-2.png" alt="">
+    <div class="welcome-message" style="display: none;">Welcome, <span id="firstName"></span>! </div>
+
     </div>
-    <div class="page-title">
-        <h1>Scheduled Feeding</h1>
-    </div>
+
     <div class="buttons">
-        <a> <button id="noti" onclick="openPopup('notiPopup')">Notifications</button> </a>
         <a href="Home.html"> <button id="home">Home</button> </a>
-        
+        <button id="account" onclick="openPopup('accountPopup')">Account</button>
     </div>
 </nav>
 
+</div>
+
+<!--HTML Account Popup Code; owned by Nathan Davis --!>
+<div id="accountPopup" class="popup">
+    <span class="close-btn" onclick="closePopup('accountPopup')">❌</span>
+    <h2>Account</h2>
+    <p class="userInfo"></p>
+    <button id="logout" onclick="logout()">Logout</button>
+
+</div>
+
 <!-- Add buttons to trigger popups -->
-<div class="addedit">
+<div class="add-button-box">
+<div class="addEdit">
     <button id="add" onclick="openAddPopup()">Add</button>
-    <button id="edit" onclick="openEditPopup()">Edit</button>
+    <!--<button id="edit" onclick="openEditPopup()">Edit</button>--!>
 </div>
-
-<div id="schedule-container">
-    <!-- Schedule lines will be displayed here -->
 </div>
-
-<!-- Popup for adding a new schedule line -->
-<div id="addPopup" class="popup">
+<!--
+<div id="user-title-container">
+    <h2 id="user-title"></h2>
+</div>
+--!>
+<div id="scheduleTableContainer">
+    <div id="scheduleTable"></div>
+</div>
+<!-- Popup for adding a new schedule line; Basic code created by Aubrey Simpson, additions made by Dominic Nguyen -->
+<div id="addPopup" class="popup addEditPopup">
     <span class="close-btn" onclick="closePopup('addPopup')">❌</span>
-    <label for="add-times">Time:</label>
     <label for="times">Choose a time:</label>
-    <select name="times" id="times">
-        <option value="midnight">12 AM</option>
-        <option value="oneam">1 AM</option>
-        <option value="twoam">2 AM</option>
-        <option value="threeam">3 AM</option>
-        <option value="fouram">4 AM</option>
-        <option value="fiveam">5 AM</option>
-        <option value="sixam">6 AM</option>
-        <option value="sevenam">7 AM</option>
-        <option value="eightam">8 AM</option>
-        <option value="nineam">9 AM</option>
-        <option value="tenam">10 AM</option>
-        <option value="elevenam">11 AM</option>
-        <option value="midday">12 PM</option>
-        <option value="onepm">1 PM</option>
-        <option value="twopm">2 PM</option>
-        <option value="threepm">3 PM</option>
-        <option value="fourpm">4 PM</option>
-        <option value="fivepm">5 PM</option>
-        <option value="sixpm">3 AM</option>
-        <option value="sevenpm">7 PM</option>
-        <option value="eightpm">8 PM</option>
-        <option value="ninepm">9 PM</option>
-        <option value="tenpm">10 PM</option>
-        <option value="elevenpm">11 PM</option>
-    </select>
+     <select name="times" id="times">
+         <option value="midnight">12 AM</option>
+         <option value="oneam">1 AM</option>
+         <option value="twoam">2 AM</option>
+         <option value="threeam">3 AM</option>
+         <option value="fouram">4 AM</option>
+         <option value="fiveam">5 AM</option>
+         <option value="sixam">6 AM</option>
+         <option value="sevenam">7 AM</option>
+         <option value="eightam">8 AM</option>
+         <option value="nineam">9 AM</option>
+         <option value="tenam">10 AM</option>
+         <option value="elevenam">11 AM</option>
+         <option value="midday">12 PM</option>
+         <option value="onepm">1 PM</option>
+         <option value="twopm">2 PM</option>
+         <option value="threepm">3 PM</option>
+         <option value="fourpm">4 PM</option>
+         <option value="fivepm">5 PM</option>
+         <option value="sixpm">6 PM</option>
+         <option value="sevenpm">7 PM</option>
+         <option value="eightpm">8 PM</option>
+         <option value="ninepm">9 PM</option>
+         <option value="tenpm">10 PM</option>
+         <option value="elevenpm">11 PM</option>
+     </select>
+
     <label for="amount">Amount to feed (1-6 ounces):</label>
-    <input type="number" id="amount" name="amount" min="1" max="6" required>
+    <select type="number" id="amount" name="amount">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+    </select>
     <button id="submitButton" onclick="addScheduleLine()">Add Schedule Line</button> <!-- Call addScheduleLine() when clicked -->
 </div>
 
-<!-- Popup for editing an existing schedule line -->
+<!-- Popup for editing an existing schedule line; Basic code created by Aubrey Simpson, additions made by Dominic Nguyen -->
 <div id="editPopup" class="popup">
     <span class="close-btn" onclick="closePopup('editPopup')">❌</span>
     <label for="edit-times">Time:</label>
@@ -117,6 +141,8 @@
 </div>
 
 <script src="siteScript.js" type="text/javascript"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
 </body>
 </html>
 
