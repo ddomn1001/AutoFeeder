@@ -1,5 +1,5 @@
 //Originally Written by Dominick Nyguen
-//Modified by Hale Anderson and Luke Saunders
+//Modified by Hale Anderson, Luke Saunders, and Mason S
 const WebSocket = require('ws');
 const { exec } = require('child_process');
 
