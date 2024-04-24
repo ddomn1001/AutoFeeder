@@ -1,4 +1,6 @@
 # camera.py
+# Writen by Tyler Powell, Luke Saunders 
+# Edited by Hale Anderson and Mason Spillman
 
 import cv2
 import base64
