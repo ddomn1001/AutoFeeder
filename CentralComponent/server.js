@@ -49,162 +49,10 @@ const pool = new Pool({
     port: 8963,
 });
 
-// Initialize Passport and session middleware
-/*app.use(passport.initialize());
-app.use(passport.session());
-
-// Configure Passport to use Google OAuth 2.0
-passport.use(new GoogleStrategy({
-    clientID: '1024353478091-52dv16kmd56g4dgrjuv0vmn715u1fpfs.apps.googleusercontent.com',
-    clientSecret: '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',
-    callbackURL: 'https://www.jmuautofeeder.com/feeding.html',
-  },
-  function(accessToken, refreshToken, profile, done) {
-    // Verify user's identity
-    return done(null, profile);
-  }
-));
-
-// Serialize user object
-passport.serializeUser(function(user, done) {
-    done(null, user);
-});
-
-// Deserialize user object
-passport.deserializeUser(function(user, done) {
-    done(null, user);
-});
-
-// Define routes
-app.get('/auth/google',
-  passport.authenticate('google', { scope: ['profile', 'email'] }));
-
-app.get('/auth/google/callback',
-  passport.authenticate('google', { failureRedirect: '/login' }),
-  function(req, res) {
-    // Successful authentication, redirect home.
-    res.redirect('/');
-});
-
-app.get('/login', (req, res) => {
-    res.send('Login Page');
-});
-
-app.get('/', (req, res) => {
-    res.send('Home Page');
-});
-*/
-// Function to generate JWT token DOMINIC NGUYEN
-/*function generateAuthToken(username) {
-    return jwt.sign({ username }, 'c8hhdj992');
-}*/
-
-// Load the secret key from environment variable
 //const jwtSecretKey = process.env.JWT_SECRET_KEY;
 const jwtSecretKey = 'tiingoindEIGN232';
-// Function to generate JWT token with the secret key retrieved from environment variable
-/* function generateAuthToken(username) {
-    try {
-        // Sign JWT token with payload and secret key retrieved from environment variable
-        const token = jwt.sign({ username }, jwtSecretKey);
-        return token;
-    } catch (error) {
-        console.error('Error signing JWT token:', error);
-        throw new Error('Failed to sign JWT token');
-    }
-}
-*/
-/*
-function generateAuthToken(username) {
-    try {
-        const token = jwt.sign({ username: username }, jwtSecretKey, { expiresIn: '1h' });
-        return token;
-    } catch (error) {
-        console.error('Error signing JWT token:', error.message);
-        throw new Error('Failed to sign JWT token');
-    }
-}
-*/
-/*
-function generateAuthToken(username) {
-    try {
-        console.log("Username:", username); // Add this line to check the value of username
-        const token = jwt.sign({ username }, jwtSecretKey, { expiresIn: '1h' });
-        return token;
-    } catch (error) {
-        console.error('Error signing JWT token:', error);
-        throw new Error('Failed to sign JWT token');
-    }
-}*/
-/*
-function generateAuthToken(username) {
-    try {
-        console.log('Generating token for username:', username);
-        console.log('JWT Secret Key:', jwtSecretKey);
-        const token = jwt.sign({ username }, jwtSecretKey, { expiresIn: '1h' });
-        console.log('Token generated successfully:', token);
-        return token;
-    } catch (error) {
-        console.error('Error signing JWT token:', error);
-        throw new Error('Failed to sign JWT token');
-    }
-}
-*/
 
-
-
-/*
-app.post('/login', async (req, res) => {
-    const { username, password } = req.body;
-    try {
-        const result = await pool.query('SELECT * FROM login WHERE username = $1', [username]);
-        if (result.rows.length > 0) {
-            // Compare hashed passwords
-            const user = result.rows[0];
-            if (user.password_hash === crypt(password, user.password_hash)) {
-                // Store user data in session upon successful login
-                req.session.username = username;
-                const authToken = generateAuthToken(username);
-                res.status(200).json({ message: 'Login successful', authToken, username });
-            } else {
-                res.status(401).json({ message: 'Invalid username or password' });
-            }
-        } else {
-            res.status(401).json({ message: 'Invalid username or password' });
-        }
-    } catch (error) {
-        console.error('Error during login:', error);
-        res.status(500).json({ message: 'Internal server error' });
-    }
-});
-*/
-/*
-app.post('/login', async (req, res) => {
-    const { username, password } = req.body;
-    try {
-        const result = await pool.query('SELECT * FROM login WHERE username = $1', [username]);
-        if (result.rows.length > 0) {
-            const user = result.rows[0];
-            const passwordMatch = await bcrypt.compare(password, user.password_hash);
-            if (passwordMatch) {
-                // Passwords match, login successful
-                req.session.username = username;
-                const authToken = generateAuthToken(username);
-                res.status(200).json({ message: 'Login successful', authToken, username });
-            } else {
-                // Passwords don't match, login failed
-                res.status(401).json({ message: 'Invalid username or password' });
-            }
-        } else {
-            // User not found, login failed
-            res.status(401).json({ message: 'Invalid username or password' });
-        }
-    } catch (error) {
-        console.error('Error during login:', error);
-        res.status(500).json({ message: 'Internal server error' });
-    }
-});
-*/
+//Nathan Davis
 function generateAuthToken(username) {
     try {
         console.log('Generating token for username:', username);
@@ -230,25 +78,7 @@ app.post('/create-account', async (req, res) => {
     }
 });
 
-// Login route DOMINIC NGUYEN
-/*app.post('/login', async (req, res) => {
-    const { username, password } = req.body;
-    try {
-        const result = await pool.query('SELECT * FROM login WHERE username = $1 AND password_hash = crypt($2, password_hash)', [username, password]);
-        if (result.rows.length > 0) {
-            // Store user data in session upon successful login
-            req.session.username = username;
-            const authToken = generateAuthToken(username);
-            res.status(200).json({ message: 'Login successful', authToken, username });
-        } else {
-            res.status(401).json({ message: 'Invalid username or password' });
-        }
-    } catch (error) {
-        console.error('Error during login:', error);
-        res.status(500).json({ message: 'Internal server error' });
-    }
-});
-*/
+
 
 //Login Route Create & Modified by Dominic Nguyen (modified on 4/16/2024 to grab username, fname, lname, email)
 app.post('/login', async (req, res) => {
@@ -339,18 +169,7 @@ app.post('/update-scheduled-feeding-info', requireAuth, async (req, res) => {
         const insertedInfo = result.rows[0]; // Retrieve the inserted scheduled feeding information
 
         console.log('Inserted scheduled feeding information:', insertedInfo);
-/*
-        // Send the new scheduled feeding information to the client
-        const dataToSend = { id: insertedInfo.id, time: parsedTime, amount, username };
-        console.log('Data being sent to client:', dataToSend);
 
-        // Broadcast the new scheduled feeding information to all connected clients
-        wss.clients.forEach(function each(client) {
-            if (client.readyState === WebSocket.OPEN) {
-                client.send(JSON.stringify(dataToSend));
-            }
-        });
-*/
         res.status(200).json({ message: 'Scheduled feeding information updated successfully', insertedInfo }); // Return the inserted scheduled feeding information in the response
     } catch (error) {
         if (error.code === '23505') {
@@ -424,23 +243,6 @@ app.get('/feeding-information', async (req, res) => {
     }
 });
 
-/*Route to retrieve user information for the logged-in user JT COLEMAN
-app.get('/login', async (req, res) => {
-const username = req.session.username; // Retrieve username from session
-
-try {
-    // Query the database to retrieve feeding information for the logged-in user
-    const result = await pool.query('SELECT * FROM Login WHERE username = $1', [username]);
-
-    const loginInfo = result.rows; // Retrieve the user information
-
-    res.status(200).json(loginInfo); // Return the user information in the response
-} catch (error) {
-    console.error('Error retrieving login information:', error);
-    res.status(500).json({ message: 'Internal server error' });
-}
-});
-*/
 
 // Route to update scheduled feeding information DOMINIC NGUYEN; requireAuth added by Nathan Davis
 app.post('/edit-scheduled-feeding-info', requireAuth, async (req, res) => {
@@ -466,33 +268,6 @@ app.post('/edit-scheduled-feeding-info', requireAuth, async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 });
-/*
-let scheduledFeedingInterval;
-// Function to check and trigger scheduled feeding DOMINIC NGUYEN
-async function checkScheduledFeeding() {
-    const currentTime = new Date().toLocaleTimeString('en-US', { hour12: false });
-
-    try {
-        const result = await pool.query('SELECT * FROM scheduled_feeding_information WHERE feeding_time = $1', [currentTime]);
-        const feedingInfo = result.rows;
-
-        if (feedingInfo.length > 0) {
-            const info = feedingInfo[0];
-            const dataToSend = { id: info.id, fed: true, amount: info.amount, username: info.username };
-            console.log('Data being sent to client:', dataToSend);
-
-            // Broadcast the new feeding information to all connected clients
-            wss.clients.forEach(function each(client) {
-                if (client.readyState === WebSocket.OPEN) {
-                    client.send(JSON.stringify(dataToSend));
-                }
-            });
-        }
-    } catch (error) {
-        console.error('Error checking scheduled feeding:', error);
-    }
-}
-*/
 
 let scheduledFeedingInterval;
 let isMachinePaused = false; // Flag to track machine pause state
@@ -565,61 +340,9 @@ app.post('/start-machine', requireAuth, async (req, res) => {
     res.status(200).json({ message: 'Machine started successfully' });
 });
 
-/* WORKING WeB SOCKET
-// WebSocket connection event handler DOMINIC NGUYEN
-wss.on('connection', function connection(ws) {
-    // WebSocket message handler for client success notification
-    ws.on('message', async function incoming(data) {
-        // Parse the received message as a JSON object
-        const message = JSON.parse(data);
-        console.log('Received message from client:', message);
-        console.log('WORKING');
-
-        // Check if the message contains the 'success' field
-        if ('success' in message && message.success === true) {
-            console.log('Updating fed value for id:',[message.id]);
-            try {
-                // Update fed value in the feeding_information table
-                await pool.query('UPDATE feeding_information SET fed = true WHERE id = $1;', [message.id]);
-                console.log('Fed value updated successfully working');
-                console.log('working');
-            } catch (error) {
-                console.error('Error updating fed value:', error);
-            }
-        }
-
-         console.log('WORKING');
-
-        /*if (('low' in message && message.status === 'low') {
-            || ('Empty' in message && message.status === 'Empty')) {
-            console.log('Food levels low in container');
-            //send alert to front end to notify user of food level
-            res.status(200).json({message:"Food levels in the container are {0}", message.status});
-
-        } else
-        {
-            console.log('Food levels are good');
-            res.status(401).json({message:"Food levels in the container are good"});
-
-        } */
 
 
-//    });
-//});
-
-/*
-const cameraFeed = document.getElementByID('cameraFeed');
-ws.onmessage = function(event) {
-        const data = event.data;
-        if (data instanceof Blob) {
-                const blob = new Blob([data], {type:'video/mp4'});
-                const url = URL.createObjectURL(blob);
-                cameraFeed.src = url;
-        }
-
-}*/
-
-// Route to delete a schedule line
+// Route to delete a schedule line Dominic Nguyen
 app.delete('/delete-schedule-line/:username/:time', requireAuth, async (req, res) => {
     const username = req.params.username; // Retrieve username from URL parameter
     const time = req.params.time; // Retrieve time from URL parameter
@@ -648,126 +371,9 @@ const port = 443;
 httpsServer.listen(port, () => {
     console.log(`Server is running on https://www.jmuautofeeder.com on port:${port}`);
 });
-/*
-app.get('/user/:username', async (req, res) => {
-    const username = req.params.username;
-    try {
-        const userData = await pool.query('SELECT fname, lname, email FROM login WHERE username = $1', [username]);
-        if (userData.rows.length > 0) {
-            const { fname, lname, email } = userData.rows[0];
-            res.json({ fname, lname, email });
-        } else {
-            res.status(404).json({ message: 'User not found' });
-        }
-    } catch (error) {
-        //console.error('Error fetching user information:', error);
-        //cres.status(500).json({ message: 'Internal server error' });
-    }
-});
-*/
-/*
+
+// WebSocket message handler for client Dominic Nguyen
 const base64ToImage = require('base64-to-image');
-
-// Function to decode Base64 image data and store it in PostgreSQL
-function storeImageInDatabase(username, image_data) {
-    try {
-        // Decode Base64 image data
-        const decodedImage = Buffer.from(image_data, 'base64');
-
-        // Insert image data into the database
-        const query = {
-            text: 'INSERT INTO userimages (username, capture_datetime, image) VALUES ($1, $2, $3);',
-            values: [username, new Date(), decodedImage],
-        };
-
-        // Use the existing pool to execute the query
-        pool.query(query, (err, result) => {
-            if (err) {
-                console.error('Error storing image in the database:', err);
-            } else {
-                console.log('Image stored successfully in the database.');
-            }
-        });
-    } catch (error) {
-        console.error('Error decoding or storing image:', error);
-    }
-}
-/*
-// WebSocket message handler for client
-wss.on('message', function incoming(data) {
-    // Parse the received message as a JSON object
-    const message = JSON.parse(data);
-    console.log('Received message from client:', message);
-
-    // Check if the message contains the image data and username
-    if (message.username && message.image_data) {
-        const { username, image_data } = message;
-        // Call the function to store image in database
-        storeImageInDatabase(username, image_data);
-    } else {
-        console.error('Received message does not contain image data or username:', message);
-    }
-});
-*/
-
-// WebSocket message handler for client
-// Import necessary modules
-const base64ToImage = require('base64-to-image');
-
-// WebSocket connection event handler
-/*wss.on('connection', function connection(ws) {
-    // WebSocket message handler for client success notification and image data
-    ws.on('message', async function incoming(data) {
-        // Log the raw received data for debugging
-        console.log('Raw message from client:', data);
-
-        // Parse the received message as a JSON object
-        let message;
-        try {
-            message = JSON.parse(data);
-        } catch (error) {
-            console.error('Error parsing JSON:', error);
-            return;
-        }
-
-        console.log('Received message from client:', message);
-
-        // Check if the message contains the image data and username
-        if (message.username && message.image_data) {
-            const { username, image_data } = message;
-            // Call the function to store image in database
-            storeImageInDatabase(username, image_data);
-        } else {
-            console.error('Received message does not contain image data or username:', message);
-        }
-
-        // Check if the message contains the 'success' field
-        if ('success' in message && message.success === true) {
-            console.log('Updating fed value for id:', [message.id]);
-            try {
-                // Update fed value in the feeding_information table
-                await pool.query('UPDATE feeding_information SET fed = true WHERE id = $1;', [message.id]);
-                console.log('Fed value updated successfully.');
-            } catch (error) {
-                console.error('Error updating fed value:', error);
-            }
-        }
-
-        /*if (('low' in message && message.status === 'low') {
-            || ('Empty' in message && message.status === 'Empty')) {
-            console.log('Food levels low in container');
-            //send alert to front end to notify user of food level
-            res.status(200).json({message:"Food levels in the container are {0}", message.status});
-
-        } else
-        {
-            console.log('Food levels are good');
-            res.status(401).json({message:"Food levels in the container are good"});
-
-        } */
-  //  });
-//});
-
 
 let food_level = 'Empty';
 
@@ -864,75 +470,7 @@ function storeImageInDatabase(username, image_data) {
 }
 
 
-// Endpoint to handle fetching the most recent image for the user 'test'
-/*app.get('/get-most-recent-image', (req, res) => {
-    // Query to select the most recent image for the user 'test'
-    const sql = `
-        SELECT image
-        FROM userimages
-        WHERE username = 'test'
-        ORDER BY capture_datetime DESC
-        LIMIT 1
-    `;
 
-    // Execute the query
-    pool.query(sql, (error, results) => {
-        if (error) {
-            console.error('Error fetching most recent image:', error);
-            return res.status(500).send('Internal Server Error');
-        }
-
-        // Check if any results were returned
-        if (results.length === 0) {
-            return res.status(404).send('Image not found');
-        }
-
-        // Get the image data from the query results
-        const imageData = results[0].image;
-
-        // Set the appropriate content type in the response headers
-        res.setHeader('Content-Type', 'image/jpeg');
-
-        // Send the image data as the response
-        res.send(imageData);
-    });
-});
-*/
-
-// Endpoint to handle fetching the most recent image for the user 'test'
-/*app.get('/get-most-recent-image', (req, res) => {
-    // Query to select the most recent image for the user 'test'
-    const sql = `
-        SELECT image
-        FROM userimages
-        WHERE username = 'test'
-        ORDER BY capture_datetime DESC
-        LIMIT 1
-    `;
-
-    // Execute the query
-    pool.query(sql, (error, results) => {
-        if (error) {
-            console.error('Error fetching most recent image:', error);
-            return res.status(500).send('Internal Server Error');
-        }
-
-        // Check if any results were returned
-        if (results.rows.length === 0) {
-            return res.status(404).send('Image not found');
-        }
-
-        // Get the image data from the query results
-        const imageData = results.rows[0].image;
-
-        // Set the appropriate content type in the response headers
-        res.setHeader('Content-Type', 'application/octet-stream');
-
-        // Send the image data as the response
-        res.send(imageData);
-    });
-});
-*/
 
 // Endpoint to handle fetching the most recent image for the logged-in user DOMNIIC NGUYEN
 app.get('/get-most-recent-image', (req, res) => {
