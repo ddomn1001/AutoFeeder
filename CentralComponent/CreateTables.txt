@@ -1,0 +1,36 @@
+CREATE TABLE userimages (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(255) NOT NULL,
+    capture_datetime TIMESTAMP NOT NULL,
+    image BYTEA NOT NULL
+);
+
+CREATE TABLE feeding_information (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(255) NOT NULL,
+    fed BOOLEAN NOT NULL,
+    amount INTEGER NOT NULL
+);
+
+CREATE TABLE scheduled_feeding_information (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(255) NOT NULL,
+    feeding_time TIME NOT NULL,
+    amount INTEGER NOT NULL
+);
+
+
+Create Login Table: 
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
+-- Then, create the login table
+CREATE TABLE login (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    password_hash TEXT NOT NULL,
+    first_name VARCHAR(50),
+    last_name VARCHAR(50)
+);
+
+
